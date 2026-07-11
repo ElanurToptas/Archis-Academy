@@ -28,6 +28,11 @@ class _RegisterViewState extends State<RegisterView> {
     super.dispose();
   }
 
+  bool isValidEmail(String email) {
+    final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+    return emailRegex.hasMatch(email);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -112,6 +117,17 @@ class _RegisterViewState extends State<RegisterView> {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
                             content: Text("Şifre en az 6 karakter olmalı!"),
+                          ),
+                        );
+                        return;
+                      }
+
+                      if (!isValidEmail(emailController.text)) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text(
+                              "Lütfen geçerli bir e-posta adresi girin!",
+                            ),
                           ),
                         );
                         return;

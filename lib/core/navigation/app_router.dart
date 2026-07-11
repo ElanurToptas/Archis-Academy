@@ -15,6 +15,8 @@ class AppRoutes {
 final router = GoRouter(
   navigatorKey: _rootKey,
   initialLocation: AppRoutes.register,
+
+  
   routes: [
     GoRoute(
       path: AppRoutes.register,

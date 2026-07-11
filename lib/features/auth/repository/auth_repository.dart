@@ -14,6 +14,7 @@ class AuthRepository implements IAuthRepository {
     await prefs.setString('user_email', email);
     await prefs.setString('user_name', name);
     await prefs.setString('user_surname', surname);
+    await prefs.setString('user_password', password);
     await prefs.setBool('is_logged_in', true);
   }
 
@@ -23,6 +24,7 @@ class AuthRepository implements IAuthRepository {
     
     final String? savedName = prefs.getString('user_name');
     final String? savedPassword = prefs.getString('user_password'); 
+
 
     return (savedName == name && savedPassword == password);
   }
