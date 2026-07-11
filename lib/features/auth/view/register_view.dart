@@ -95,14 +95,36 @@ class _RegisterViewState extends State<RegisterView> {
                         borderRadius: BorderRadius.circular(8),
                       ),
                     ),
-                    // RegisterView içerisinde:
-                    onPressed: ()  async {
-                      context.read<AuthProvider>().signUp(
+                    onPressed: () async {
+                      if (nameController.text.isEmpty ||
+                          surnameController.text.isEmpty ||
+                          emailController.text.isEmpty ||
+                          passwordController.text.isEmpty) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text("Lütfen tüm alanları doldur!"),
+                            backgroundColor: Colors.red,
+                          ),
+                        );
+                        return;
+                      }
+                      if (passwordController.text.length < 6) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text("Şifre en az 6 karakter olmalı!"),
+                          ),
+                        );
+                        return;
+                      }
+
+                      final authProvider = context.read<AuthProvider>();
+                      await authProvider.signUp(
                         nameController.text,
                         surnameController.text,
                         emailController.text,
                         passwordController.text,
                       );
+
                       if (mounted) {
                         context.go(AppRoutes.home);
                       }

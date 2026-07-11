@@ -77,22 +77,34 @@ class _LoginViewState extends State<LoginView> {
                     ),
 
                     onPressed: () async {
-  final success = await context.read<AuthProvider>().signIn(
-    nameController.text,
-    passwordController.text,
-  );
+                      if (nameController.text.isEmpty ||
+                          passwordController.text.isEmpty) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text("Lütfen tüm alanları doldur!"),
+                            backgroundColor: Colors.red,
+                          ),
+                        );
+                        return; 
+                      }
 
-  if (mounted) {
-    if (success) {
-      context.go(AppRoutes.home);
-    } else {
-      // Hata mesajı göster (Profesyonel yaklaşım: SnackBar)
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Kullanıcı adı veya şifre hatalı!")),
-      );
-    }
-  }
-},
+                      final success = await context.read<AuthProvider>().signIn(
+                        nameController.text,
+                        passwordController.text,
+                      );
+
+                      if (mounted) {
+                        if (success) {
+                          context.go(AppRoutes.home);
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text("Kullanıcı adı veya şifre hatalı!"),
+                            ),
+                          );
+                        }
+                      }
+                    },
                     child: const Text(
                       "Giriş yap",
                       style: TextStyle(fontSize: 16),
