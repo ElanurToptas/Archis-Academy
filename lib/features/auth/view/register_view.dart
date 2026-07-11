@@ -1,6 +1,8 @@
 import 'package:archis_academy/core/navigation/app_router.dart';
 import 'package:archis_academy/features/auth/widgets/custom_text_field.dart';
 import 'package:archis_academy/features/auth/repository/auth_repository.dart';
+import 'package:archis_academy/product/init/language/locale_keys.g.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
@@ -44,9 +46,12 @@ class _RegisterViewState extends State<RegisterView> {
               children: [
                 SvgPicture.asset('assets/images/logo.svg', height: 50),
                 const SizedBox(height: 24),
-                const Text(
-                  "Hesap oluştur",
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+                Text(
+                  LocaleKeys.auth_register_title.tr(),
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
                 const SizedBox(height: 30),
 
@@ -55,32 +60,32 @@ class _RegisterViewState extends State<RegisterView> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       CustomTextField(
-                        label: "Ad",
-                        hint: "Adını gir",
+                        label: LocaleKeys.auth_register_nameLabel.tr(),
+                        hint: LocaleKeys.auth_register_nameHint.tr(),
                         controller: nameController,
                         textInputAction: TextInputAction.next,
                       ),
                       const SizedBox(height: 15),
 
                       CustomTextField(
-                        label: "Soyad",
-                        hint: "Soyadını gir",
+                        label: LocaleKeys.auth_register_surnameLabel.tr(),
+                        hint: LocaleKeys.auth_register_surnameHint.tr(),
                         controller: surnameController,
                         textInputAction: TextInputAction.next,
                       ),
                       const SizedBox(height: 15),
 
                       CustomTextField(
-                        label: "E-posta",
-                        hint: "E-postanı gir",
+                        label: LocaleKeys.auth_register_emailLabel.tr(),
+                        hint: LocaleKeys.auth_register_emailHint.tr(),
                         controller: emailController,
                         textInputAction: TextInputAction.next,
                       ),
                       const SizedBox(height: 15),
 
                       CustomTextField(
-                        label: "Şifre",
-                        hint: "Şifreni gir",
+                        label: LocaleKeys.auth_register_passwordLabel.tr(),
+                        hint: LocaleKeys.auth_register_passwordHint.tr(),
                         controller: passwordController,
                         obscure: true,
                         textInputAction: TextInputAction.next,
@@ -106,8 +111,10 @@ class _RegisterViewState extends State<RegisterView> {
                           emailController.text.isEmpty ||
                           passwordController.text.isEmpty) {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text("Lütfen tüm alanları doldur!"),
+                          SnackBar(
+                            content: Text(
+                              LocaleKeys.auth_register_emptyFields.tr(),
+                            ),
                             backgroundColor: Colors.red,
                           ),
                         );
@@ -115,8 +122,10 @@ class _RegisterViewState extends State<RegisterView> {
                       }
                       if (passwordController.text.length < 3) {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text("Şifre en az 3 karakter olmalı!"),
+                          SnackBar(
+                            content: Text(
+                              LocaleKeys.auth_register_passwordTooShort.tr(),
+                            ),
                           ),
                         );
                         return;
@@ -124,9 +133,9 @@ class _RegisterViewState extends State<RegisterView> {
 
                       if (!isValidEmail(emailController.text)) {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
+                          SnackBar(
                             content: Text(
-                              "Lütfen geçerli bir e-posta adresi girin!",
+                              LocaleKeys.auth_register_invalidEmail.tr(),
                             ),
                           ),
                         );
@@ -145,9 +154,9 @@ class _RegisterViewState extends State<RegisterView> {
                         context.go(AppRoutes.home);
                       }
                     },
-                    child: const Text(
-                      "Kayıt ol",
-                      style: TextStyle(fontSize: 16),
+                    child: Text(
+                      LocaleKeys.auth_register_submit.tr(),
+                      style: const TextStyle(fontSize: 16),
                     ),
                   ),
                 ),
@@ -155,14 +164,14 @@ class _RegisterViewState extends State<RegisterView> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text("Zaten bir hesabın mı var? "),
+                    Text(LocaleKeys.auth_register_alreadyHaveAccount.tr()),
                     GestureDetector(
                       onTap: () {
                         context.go(AppRoutes.login);
                       },
-                      child: const Text(
-                        "Giriş yap",
-                        style: TextStyle(
+                      child: Text(
+                        LocaleKeys.auth_register_login.tr(),
+                        style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           color: Colors.black,
                         ),

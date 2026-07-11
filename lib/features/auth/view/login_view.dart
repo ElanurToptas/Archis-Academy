@@ -1,6 +1,8 @@
 import 'package:archis_academy/core/navigation/app_router.dart';
 import 'package:archis_academy/features/auth/widgets/custom_text_field.dart';
 import 'package:archis_academy/features/auth/repository/auth_repository.dart';
+import 'package:archis_academy/product/init/language/locale_keys.g.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
@@ -35,9 +37,12 @@ class _LoginViewState extends State<LoginView> {
               children: [
                 SvgPicture.asset('assets/images/logo.svg', height: 50),
                 const SizedBox(height: 24),
-                const Text(
-                  "Giriş yap",
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+                Text(
+                  LocaleKeys.auth_login_title.tr(),
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
                 const SizedBox(height: 30),
 
@@ -46,16 +51,16 @@ class _LoginViewState extends State<LoginView> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       CustomTextField(
-                        label: "Ad",
-                        hint: "Adını gir",
+                        label: LocaleKeys.auth_login_nameLabel.tr(),
+                        hint: LocaleKeys.auth_login_nameHint.tr(),
                         controller: nameController,
                         textInputAction: TextInputAction.next,
                       ),
                       const SizedBox(height: 15),
 
                       CustomTextField(
-                        label: "Şifre",
-                        hint: "Şifreni gir",
+                        label: LocaleKeys.auth_login_passwordLabel.tr(),
+                        hint: LocaleKeys.auth_login_passwordHint.tr(),
                         controller: passwordController,
                         obscure: true,
                         textInputAction: TextInputAction.next,
@@ -80,12 +85,14 @@ class _LoginViewState extends State<LoginView> {
                       if (nameController.text.isEmpty ||
                           passwordController.text.isEmpty) {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text("Lütfen tüm alanları doldur!"),
+                          SnackBar(
+                            content: Text(
+                              LocaleKeys.auth_login_emptyFields.tr(),
+                            ),
                             backgroundColor: Colors.red,
                           ),
                         );
-                        return; 
+                        return;
                       }
 
                       final success = await context.read<AuthProvider>().signIn(
@@ -98,16 +105,18 @@ class _LoginViewState extends State<LoginView> {
                           context.go(AppRoutes.home);
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text("Kullanıcı adı veya şifre hatalı!"),
+                            SnackBar(
+                              content: Text(
+                                LocaleKeys.auth_login_invalidCredentials.tr(),
+                              ),
                             ),
                           );
                         }
                       }
                     },
-                    child: const Text(
-                      "Giriş yap",
-                      style: TextStyle(fontSize: 16),
+                    child: Text(
+                      LocaleKeys.auth_login_title.tr(),
+                      style: const TextStyle(fontSize: 16),
                     ),
                   ),
                 ),
@@ -115,14 +124,14 @@ class _LoginViewState extends State<LoginView> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text("Zaten bir hesabın mı var? "),
+                    Text(LocaleKeys.auth_login_alreadyHaveAccount.tr()),
                     GestureDetector(
                       onTap: () {
                         context.go(AppRoutes.register);
                       },
-                      child: const Text(
-                        "Kayıt ol",
-                        style: TextStyle(
+                      child: Text(
+                        LocaleKeys.auth_login_register.tr(),
+                        style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           color: Colors.black,
                         ),
@@ -148,9 +157,12 @@ Widget build(BuildContext context) {
           padding: const EdgeInsets.all(24),
           child: Column(
             children: [
-              const Text(
-                "Giriş Yap",
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+              Text(
+                LocaleKeys.auth_login_title.tr(),
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
               const SizedBox(height: 30),
               // Add your login form here

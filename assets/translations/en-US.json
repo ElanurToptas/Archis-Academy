@@ -1,0 +1,46 @@
+{
+  "auth": {
+    "login": {
+      "title": "Sign in",
+      "nameLabel": "Name",
+      "nameHint": "Enter your name",
+      "passwordLabel": "Password",
+      "passwordHint": "Enter your password",
+      "emptyFields": "Please fill in all fields!",
+      "invalidCredentials": "Username or password is incorrect!",
+      "alreadyHaveAccount": "Already have an account? ",
+      "register": "Register"
+    },
+    "register": {
+      "title": "Create account",
+      "nameLabel": "Name",
+      "nameHint": "Enter your name",
+      "surnameLabel": "Surname",
+      "surnameHint": "Enter your surname",
+      "emailLabel": "Email",
+      "emailHint": "Enter your email",
+      "passwordLabel": "Password",
+      "passwordHint": "Enter your password",
+      "emptyFields": "Please fill in all fields!",
+      "passwordTooShort": "Password must be at least 3 characters long!",
+      "invalidEmail": "Please enter a valid email address!",
+      "submit": "Register",
+      "alreadyHaveAccount": "Already have an account? ",
+      "login": "Sign in"
+    }
+  },
+  "home": {
+    "heroTitle": "Artificial Intelligence and Project-Based Software Training",
+    "heroDescription": "Build a portfolio of real-world projects, showcase your skills in a standout CV, and gain hands-on software development experience with Archi's Academy — at affordable prices.",
+    "ctaTrial": "Start Your 1-Week Free Trial",
+    "ctaDemo": "Demo",
+    "features": {
+      "appliedLearning": "Applied Learning",
+      "mentorSupport": "1:1 Mentorship",
+      "realProjects": "Real-World Projects"
+    }
+  },
+  "video": {
+    "loadError": "Video loading error"
+  }
+}

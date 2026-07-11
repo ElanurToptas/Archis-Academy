@@ -1,4 +1,6 @@
 import 'package:archis_academy/features/home/widgets/video_section.dart';
+import 'package:archis_academy/product/init/language/locale_keys.g.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
@@ -23,10 +25,14 @@ class _HomePageState extends State<HomePage> {
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24),
-        child: Column(children: [const HomeHeroSection(),
-        SizedBox(height:32),
-        VideoApp(),
-         SizedBox(height:32),]),
+        child: Column(
+          children: [
+            const HomeHeroSection(),
+            SizedBox(height: 32),
+            VideoApp(),
+            SizedBox(height: 32),
+          ],
+        ),
       ),
     );
   }
@@ -42,9 +48,9 @@ class HomeHeroSection extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Text(
-            "Yapay Zeka ve Proje\nTabanlı Yazılım Eğitimi",
-            style: TextStyle(
+          Text(
+            LocaleKeys.home_heroTitle.tr(),
+            style: const TextStyle(
               fontSize: 32,
               fontWeight: FontWeight.bold,
               color: Colors.black,
@@ -53,9 +59,9 @@ class HomeHeroSection extends StatelessWidget {
           const SizedBox(height: 24),
 
           SizedBox(
-            child: const Text(
-              "Gerçek dünya projelerinden oluşan bir portföy oluşturarak becerilerinizi öne çıkan bir CV'de sergileyin ve Archi's Academy ile yazılım geliştirme deneyimi kazanın – üstelik uygun fiyatlarla.",
-              style: TextStyle(fontSize: 14, color: Colors.black87),
+            child: Text(
+              LocaleKeys.home_heroDescription.tr(),
+              style: const TextStyle(fontSize: 14, color: Colors.black87),
             ),
           ),
           const SizedBox(height: 24),
@@ -76,9 +82,9 @@ class HomeHeroSection extends StatelessWidget {
                   ),
                   elevation: 0,
                 ),
-                child: const Text(
-                  "1 Haftalık Ücretsiz Denemenize Başlayın",
-                  style: TextStyle(fontSize: 13),
+                child: Text(
+                  LocaleKeys.home_ctaTrial.tr(),
+                  style: const TextStyle(fontSize: 13),
                 ),
               ),
               SizedBox(width: 8),
@@ -96,7 +102,10 @@ class HomeHeroSection extends StatelessWidget {
                     borderRadius: BorderRadius.circular(8),
                   ),
                 ),
-                child: const Text("Demo", style: TextStyle(fontSize: 13)),
+                child: Text(
+                  LocaleKeys.home_ctaDemo.tr(),
+                  style: const TextStyle(fontSize: 13),
+                ),
               ),
             ],
           ),
@@ -106,21 +115,21 @@ class HomeHeroSection extends StatelessWidget {
             spacing: 24,
             runSpacing: 14,
             alignment: WrapAlignment.start,
-            children: const [
+            children:  [
               _FeatureItem(
                 icon: Icons.school_outlined,
-                text: "Uygulamalı Öğrenme",
-                iconColor: Color(0xFFFF5722),
+                text: LocaleKeys.home_features_appliedLearning.tr(),
+                iconColor: const Color(0xFFFF5722),
               ),
               _FeatureItem(
                 icon: Icons.emoji_events_outlined,
-                text: "1:1 Mentorluk",
-                iconColor: Color(0xFF00BCD4),
+                text: LocaleKeys.home_features_mentorSupport.tr(),
+                iconColor: const Color(0xFF00BCD4),
               ),
               _FeatureItem(
                 icon: Icons.rocket_launch_outlined,
-                text: "Gerçek Dünya Projeleri",
-                iconColor: Color(0xFF2196F3),
+                text: LocaleKeys.home_features_realProjects.tr(),
+                iconColor: const Color(0xFF2196F3),
               ),
             ],
           ),

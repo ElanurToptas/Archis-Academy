@@ -1,0 +1,46 @@
+{
+  "auth": {
+    "login": {
+      "title": "Giriş yap",
+      "nameLabel": "Ad",
+      "nameHint": "Adını gir",
+      "passwordLabel": "Şifre",
+      "passwordHint": "Şifreni gir",
+      "emptyFields": "Lütfen tüm alanları doldur!",
+      "invalidCredentials": "Kullanıcı adı veya şifre hatalı!",
+      "alreadyHaveAccount": "Zaten bir hesabın mı var? ",
+      "register": "Kayıt ol"
+    },
+    "register": {
+      "title": "Hesap oluştur",
+      "nameLabel": "Ad",
+      "nameHint": "Adını gir",
+      "surnameLabel": "Soyad",
+      "surnameHint": "Soyadını gir",
+      "emailLabel": "E-posta",
+      "emailHint": "E-postanı gir",
+      "passwordLabel": "Şifre",
+      "passwordHint": "Şifreni gir",
+      "emptyFields": "Lütfen tüm alanları doldur!",
+      "passwordTooShort": "Şifre en az 3 karakter olmalı!",
+      "invalidEmail": "Lütfen geçerli bir e-posta adresi girin!",
+      "submit": "Kayıt ol",
+      "alreadyHaveAccount": "Zaten bir hesabın mı var? ",
+      "login": "Giriş yap"
+    }
+  },
+  "home": {
+    "heroTitle": "Yapay Zeka ve Proje\nTabanlı Yazılım Eğitimi",
+    "heroDescription": "Gerçek dünya projelerinden oluşan bir portföy oluşturarak becerilerinizi öne çıkan bir CV'de sergileyin ve Archi's Academy ile yazılım geliştirme deneyimi kazanın – üstelik uygun fiyatlarla.",
+    "ctaTrial": "1 Haftalık Ücretsiz Denemenize Başlayın",
+    "ctaDemo": "Demo",
+    "features": {
+      "appliedLearning": "Uygulamalı Öğrenme",
+      "mentorSupport": "1:1 Mentorluk",
+      "realProjects": "Gerçek Dünya Projeleri"
+    }
+  },
+  "video": {
+    "loadError": "Video yükleme hatası"
+  }
+}
