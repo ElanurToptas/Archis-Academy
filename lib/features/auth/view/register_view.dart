@@ -1,8 +1,10 @@
 import 'package:archis_academy/core/navigation/app_router.dart';
 import 'package:archis_academy/core/widgets/custom_text_field.dart';
+import 'package:archis_academy/features/auth/repository/auth_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 
 class RegisterView extends StatefulWidget {
   const RegisterView({super.key});
@@ -12,6 +14,20 @@ class RegisterView extends StatefulWidget {
 }
 
 class _RegisterViewState extends State<RegisterView> {
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController surnameController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+
+@override
+  void dispose() {
+    nameController.dispose();
+    surnameController.dispose();
+    emailController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -36,6 +52,7 @@ class _RegisterViewState extends State<RegisterView> {
                       CustomTextField(
                         label: "Ad",
                         hint: "Adını gir",
+                        controller: nameController,
                         textInputAction: TextInputAction.next,
                       ),
                       const SizedBox(height: 15),
@@ -43,6 +60,7 @@ class _RegisterViewState extends State<RegisterView> {
                       CustomTextField(
                         label: "Soyad",
                         hint: "Soyadını gir",
+                        controller: surnameController,
                         textInputAction: TextInputAction.next,
                       ),
                       const SizedBox(height: 15),
@@ -50,6 +68,7 @@ class _RegisterViewState extends State<RegisterView> {
                       CustomTextField(
                         label: "E-posta",
                         hint: "E-postanı gir",
+                        controller: emailController,
                         textInputAction: TextInputAction.next,
                       ),
                       const SizedBox(height: 15),
@@ -57,6 +76,7 @@ class _RegisterViewState extends State<RegisterView> {
                       CustomTextField(
                         label: "Şifre",
                         hint: "Şifreni gir",
+                        controller: passwordController,
                         obscure: true,
                         textInputAction: TextInputAction.next,
                       ),
@@ -65,6 +85,7 @@ class _RegisterViewState extends State<RegisterView> {
                       CustomTextField(
                         label: "Şifreyi onayla",
                         hint: "Şifreni tekrar gir",
+                        controller: passwordController,
                         obscure: true,
                         textInputAction: TextInputAction.next,
                       ),
@@ -73,18 +94,24 @@ class _RegisterViewState extends State<RegisterView> {
                   ),
                 ),
                 SizedBox(
-                  width: double.infinity, 
+                  width: double.infinity,
                   height: 50,
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.black, 
+                      backgroundColor: Colors.black,
                       foregroundColor: Colors.white,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),
                       ),
                     ),
+                    // RegisterView içerisinde:
                     onPressed: () {
-                     
+                      context.read<AuthProvider>().signUp(
+                        nameController.text,
+                        surnameController.text,
+                        emailController.text,
+                        passwordController.text,
+                      );
                     },
                     child: const Text(
                       "Kayıt ol",
