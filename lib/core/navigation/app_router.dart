@@ -1,4 +1,4 @@
-import 'package:archis_academy/features/auth/view/home.dart';
+import 'package:archis_academy/features/home/view/home.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../features/auth/view/register_view.dart';
