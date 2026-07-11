@@ -16,7 +16,8 @@ class _VideoAppState extends State<VideoApp> {
   void initState() {
     super.initState();
 
-    _controller = VideoPlayerController.asset('assets/videos/video.mp4');
+    _controller = VideoPlayerController.asset('assets/videos/video.mp4'); 
+    // It is used to upload and check the video.
     _initializeVideoPlayerFuture = _controller.initialize().then((_) {
       setState(() {}); 
     }).catchError((error) {
@@ -32,11 +33,13 @@ class _VideoAppState extends State<VideoApp> {
 
   @override
   Widget build(BuildContext context) {
+    // The circle will show the video until it loads; once it's loaded, it will show the video.
     return FutureBuilder(
       future: _initializeVideoPlayerFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
           return GestureDetector(
+           // tracks video clicks
             onTap: () {
               setState(() {
                 _controller.value.isPlaying 
@@ -48,6 +51,7 @@ class _VideoAppState extends State<VideoApp> {
               alignment: Alignment.center,
               children: [
                 AspectRatio(
+                  // The video size remains unchanged.
                   aspectRatio: _controller.value.aspectRatio,
                   child: VideoPlayer(_controller),
                 ),
@@ -58,6 +62,7 @@ class _VideoAppState extends State<VideoApp> {
             ),
           );
         } else {
+          // It spins on the screen until the data arrives.
           return const Center(child: CircularProgressIndicator());
         }
       },

@@ -1,5 +1,5 @@
 import 'package:archis_academy/core/navigation/app_router.dart';
-import 'package:archis_academy/core/widgets/custom_text_field.dart';
+import 'package:archis_academy/features/auth/widgets/custom_text_field.dart';
 import 'package:archis_academy/features/auth/repository/auth_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';

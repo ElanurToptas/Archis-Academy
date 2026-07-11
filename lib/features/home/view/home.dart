@@ -21,14 +21,12 @@ class _HomePageState extends State<HomePage> {
           child: SvgPicture.asset('assets/images/logo.svg', height: 32),
         ),
       ),
-      body: Center(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24),
-          child: Column(children: [const HomeHeroSection(),
-          SizedBox(height:32),
-          VideoApp(),
-           SizedBox(height:32),]),
-        ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(24),
+        child: Column(children: [const HomeHeroSection(),
+        SizedBox(height:32),
+        VideoApp(),
+         SizedBox(height:32),]),
       ),
     );
   }

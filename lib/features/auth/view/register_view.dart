@@ -1,5 +1,5 @@
 import 'package:archis_academy/core/navigation/app_router.dart';
-import 'package:archis_academy/core/widgets/custom_text_field.dart';
+import 'package:archis_academy/features/auth/widgets/custom_text_field.dart';
 import 'package:archis_academy/features/auth/repository/auth_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -113,10 +113,10 @@ class _RegisterViewState extends State<RegisterView> {
                         );
                         return;
                       }
-                      if (passwordController.text.length < 6) {
+                      if (passwordController.text.length < 3) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
-                            content: Text("Şifre en az 6 karakter olmalı!"),
+                            content: Text("Şifre en az 3 karakter olmalı!"),
                           ),
                         );
                         return;
