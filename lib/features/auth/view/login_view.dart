@@ -1,8 +1,10 @@
 import 'package:archis_academy/core/navigation/app_router.dart';
 import 'package:archis_academy/core/widgets/custom_text_field.dart';
+import 'package:archis_academy/features/auth/repository/auth_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -74,7 +76,23 @@ class _LoginViewState extends State<LoginView> {
                       ),
                     ),
 
-                    onPressed: () async {},
+                    onPressed: () async {
+  final success = await context.read<AuthProvider>().signIn(
+    nameController.text,
+    passwordController.text,
+  );
+
+  if (mounted) {
+    if (success) {
+      context.go(AppRoutes.home);
+    } else {
+      // Hata mesajı göster (Profesyonel yaklaşım: SnackBar)
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Kullanıcı adı veya şifre hatalı!")),
+      );
+    }
+  }
+},
                     child: const Text(
                       "Giriş yap",
                       style: TextStyle(fontSize: 16),

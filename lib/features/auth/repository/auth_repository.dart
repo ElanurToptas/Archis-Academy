@@ -3,6 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 abstract class IAuthRepository {
   Future<void> register({required String email, required String password, required String name, required String surname});
+  Future<bool> login({required String name, required String password});
 }
 
 class AuthRepository implements IAuthRepository {
@@ -14,8 +15,16 @@ class AuthRepository implements IAuthRepository {
     await prefs.setString('user_name', name);
     await prefs.setString('user_surname', surname);
     await prefs.setBool('is_logged_in', true);
+  }
+
+   @override
+  Future<bool> login({required String name, required String password}) async {
+    final prefs = await SharedPreferences.getInstance();
     
-    print("Veri yerel olarak kaydedildi: $email");
+    final String? savedName = prefs.getString('user_name');
+    final String? savedPassword = prefs.getString('user_password'); 
+
+    return (savedName == name && savedPassword == password);
   }
 }
 
@@ -44,4 +53,19 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
   }
   }
+
+  Future<bool> signIn(String name, String password) async {
+  _isLoading = true;
+  notifyListeners();
+
+  try {
+    bool isSuccess = await _authRepository.login(name: name, password: password);
+    return isSuccess;
+  } catch (e) {
+    return false;
+  } finally {
+    _isLoading = false;
+    notifyListeners();
+  }
+}
 }
