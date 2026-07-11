@@ -1,3 +1,4 @@
+import 'package:archis_academy/features/auth/view/home.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../features/auth/view/register_view.dart';
@@ -8,6 +9,7 @@ final _rootKey = GlobalKey<NavigatorState>();
 class AppRoutes {
   static const register = '/register';
   static const login = '/login';
+  static const home = '/';
 }
 
 final router = GoRouter(
@@ -22,9 +24,12 @@ final router = GoRouter(
       path: AppRoutes.login,
       pageBuilder: (context, state) => _buildPage(const LoginView(), state),
     ),
+    GoRoute(
+      path: AppRoutes.home,
+      pageBuilder: (context, state) => _buildPage(const HomePage(), state),
+    ),
   ],
 );
-
 
 Page _buildPage(Widget child, GoRouterState state) {
   return CustomTransitionPage(

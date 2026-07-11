@@ -19,7 +19,7 @@ class _RegisterViewState extends State<RegisterView> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
-@override
+  @override
   void dispose() {
     nameController.dispose();
     surnameController.dispose();
@@ -27,7 +27,7 @@ class _RegisterViewState extends State<RegisterView> {
     passwordController.dispose();
     super.dispose();
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -81,15 +81,6 @@ class _RegisterViewState extends State<RegisterView> {
                         textInputAction: TextInputAction.next,
                       ),
                       const SizedBox(height: 15),
-
-                      CustomTextField(
-                        label: "Şifreyi onayla",
-                        hint: "Şifreni tekrar gir",
-                        controller: passwordController,
-                        obscure: true,
-                        textInputAction: TextInputAction.next,
-                      ),
-                      const SizedBox(height: 25),
                     ],
                   ),
                 ),
@@ -105,13 +96,16 @@ class _RegisterViewState extends State<RegisterView> {
                       ),
                     ),
                     // RegisterView içerisinde:
-                    onPressed: () {
+                    onPressed: ()  async {
                       context.read<AuthProvider>().signUp(
                         nameController.text,
                         surnameController.text,
                         emailController.text,
                         passwordController.text,
                       );
+                      if (mounted) {
+                        context.go(AppRoutes.home);
+                      }
                     },
                     child: const Text(
                       "Kayıt ol",

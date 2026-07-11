@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-class LoginView extends StatefulWidget {
-  const LoginView({super.key});
+class HomePage extends StatefulWidget {
+  const HomePage({super.key});
 
   @override
-  State<LoginView> createState() => _LoginViewState();
+  State<HomePage> createState() => _HomePageState();
 }
 
-class _LoginViewState extends State<LoginView> {
+class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -18,11 +18,11 @@ class _LoginViewState extends State<LoginView> {
             child: Column(
               children: [
                 const Text(
-                  "Giriş Yap",
+                  "Hoşgeldiniz",
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
                 ),
                 const SizedBox(height: 30),
-                // Add your login form here
+                // Add your home page content here
               ],
             ),
           ),
