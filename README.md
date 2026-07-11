@@ -11,7 +11,7 @@ Dynamic Navigation: Optimizes page transitions and routing using GoRouter.
 
 Video Player: Provides an intuitive video playback experience using the video_player package.
 
-Internationalization (i18n):** Supports multi-language localization using `easy_localization`, managed via code generation for type-safe and scalable text management.
+Internationalization (i18n): Supports multi-language localization using `easy_localization`, managed via code generation for type-safe and scalable text management.
 
 ## Technologies Used
 
