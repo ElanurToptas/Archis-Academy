@@ -36,7 +36,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
 
   @override
   void dispose() {
-    _focusNode.dispose(); // Bellek yönetimi (Memory Management)
+    _focusNode.dispose(); 
     super.dispose();
   }
 
