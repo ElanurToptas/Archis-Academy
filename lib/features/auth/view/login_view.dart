@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -114,6 +115,7 @@ class _LoginViewState extends State<LoginView> {
                         }
                       }
                     },
+                  
                     child: Text(
                       LocaleKeys.auth_login_title.tr(),
                       style: const TextStyle(fontSize: 16),

@@ -1,3 +1,4 @@
+import 'package:archis_academy/features/auth/repository/auth_repository.dart';
 import 'package:archis_academy/features/home/view/home.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -12,11 +13,27 @@ class AppRoutes {
   static const home = '/';
 }
 
+final authRepo = AuthRepository(); 
+
 final router = GoRouter(
   navigatorKey: _rootKey,
-  initialLocation: AppRoutes.register,
+  redirect: (context, state) async {
+    
+    final isLoggedIn = await authRepo.checkAuthStatus();
+    
+    final isGoingToLogin = state.matchedLocation == AppRoutes.login;
+    final isGoingToRegister = state.matchedLocation == AppRoutes.register;
 
-  
+    if (!isLoggedIn && !isGoingToLogin && !isGoingToRegister) {
+      return AppRoutes.login;
+    }
+
+    if (isLoggedIn && (isGoingToLogin || isGoingToRegister)) {
+      return AppRoutes.home;
+    }
+    
+    return null; 
+  },
   routes: [
     GoRoute(
       path: AppRoutes.register,

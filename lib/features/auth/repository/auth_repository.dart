@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 abstract class IAuthRepository {
   Future<void> register({required String email, required String password, required String name, required String surname});
   Future<bool> login({required String name, required String password});
+  Future<bool> checkAuthStatus(); 
 }
 
 class AuthRepository implements IAuthRepository {
@@ -28,6 +29,13 @@ class AuthRepository implements IAuthRepository {
 
     return (savedName == name && savedPassword == password);
   }
+
+  @override
+  Future<bool> checkAuthStatus() async {
+    final prefs = await SharedPreferences.getInstance(); 
+    return prefs.getBool('is_logged_in') ?? false;
+  }
+
 }
 
 class AuthProvider extends ChangeNotifier {
@@ -69,5 +77,9 @@ class AuthProvider extends ChangeNotifier {
     _isLoading = false;
     notifyListeners();
   }
+}
+
+Future<bool> get isAuthenticated async {
+  return await _authRepository.checkAuthStatus();
 }
 }
