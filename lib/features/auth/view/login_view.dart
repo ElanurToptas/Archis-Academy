@@ -95,25 +95,29 @@ class _LoginViewState extends State<LoginView> {
                         return;
                       }
 
-                      final success = await context.read<AuthProvider>().signIn(
-                        nameController.text,
-                        passwordController.text,
-                      );
+                      try {
+                        await context.read<AuthProvider>().signIn(
+                          nameController.text,
+                          passwordController.text,
+                        );
 
-                      if (mounted) {
-                        if (success) {
-                          context.go(AppRoutes.home);
-                        } else {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(
-                                LocaleKeys.auth_login_invalidCredentials.tr(),
-                              ),
+                        if (!mounted) return;
+
+                        context.go(AppRoutes.home);
+                      } catch (e) {
+                        if (!mounted) return;
+
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              "${e.toString().replaceAll("Exception: ", "")}",
                             ),
-                          );
-                        }
+                            backgroundColor: Colors.red,
+                          ),
+                        );
                       }
                     },
+
                     child: Text(
                       LocaleKeys.auth_login_title.tr(),
                       style: const TextStyle(fontSize: 16),
