@@ -10,19 +10,25 @@ class VideoApp extends StatefulWidget {
 
 class _VideoAppState extends State<VideoApp> {
   late VideoPlayerController _controller;
-  late Future<void> _initializeVideoPlayerFuture;
+  bool _hasError = false;
 
   @override
   void initState() {
     super.initState();
 
-    _controller = VideoPlayerController.asset('assets/videos/video.mp4'); 
+    _controller = VideoPlayerController.asset('assets/videos/video.mp4');
     // It is used to upload and check the video.
-    _initializeVideoPlayerFuture = _controller.initialize().then((_) {
-      setState(() {}); 
-    }).catchError((error) {
-      print("Video yükleme hatası: $error"); 
-    });
+    _controller
+        .initialize()
+        .then((_) {
+          if (!mounted) return;
+          setState(() {});
+        })
+        .catchError((error) {
+          if (!mounted) return;
+          setState(() => _hasError = true);
+          debugPrint("Video yükleme hatası: $error");
+        });
   }
 
   @override
@@ -33,39 +39,38 @@ class _VideoAppState extends State<VideoApp> {
 
   @override
   Widget build(BuildContext context) {
-    // The circle will show the video until it loads; once it's loaded, it will show the video.
-    return FutureBuilder(
-      future: _initializeVideoPlayerFuture,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.done) {
-          return GestureDetector(
-           // tracks video clicks
-            onTap: () {
-              setState(() {
-                _controller.value.isPlaying 
-                    ? _controller.pause() 
-                    : _controller.play();
-              });
-            },
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                AspectRatio(
-                  // The video size remains unchanged.
-                  aspectRatio: _controller.value.aspectRatio,
-                  child: VideoPlayer(_controller),
-                ),
-        
-                if (!_controller.value.isPlaying)
-                  const Icon(Icons.play_circle_fill, size: 60, color: Colors.white70),
-              ],
-            ),
-          );
-        } else {
-          // It spins on the screen until the data arrives.
-          return const Center(child: CircularProgressIndicator());
-        }
+    if (_hasError) {
+      return const SizedBox(
+        height: 200,
+        child: Center(child: Text("Video yüklenemedi.")),
+      );
+    }
+
+    if (!_controller.value.isInitialized) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          _controller.value.isPlaying
+              ? _controller.pause()
+              : _controller.play();
+        });
       },
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          AspectRatio(
+            // The video size remains unchanged.
+            aspectRatio: _controller.value.aspectRatio,
+            child: VideoPlayer(_controller),
+          ),
+
+          if (!_controller.value.isPlaying)
+            const Icon(Icons.play_circle_fill, size: 60, color: Colors.white70),
+        ],
+      ),
     );
   }
 }
