@@ -2,7 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 abstract class IAuthRepository {
-  Future<void> register({required String email, required String password, required String name, required String surname});
+  Future<void> register({
+    required String email,
+    required String password,
+    required String name,
+    required String surname,
+  });
   Future<bool> login({required String name, required String password});
   Future<bool> checkAuthStatus(); 
 }
@@ -19,7 +24,7 @@ class AuthRepository implements IAuthRepository {
     await _secureStorage.write(key: 'is_logged_in', value: 'true');
   }
 
-   @override
+  @override
   Future<bool> login({required String name, required String password}) async {
     final String? savedName = await _secureStorage.read(key: 'user_name');
     final String? savedPassword = await _secureStorage.read(key: 'user_password');
@@ -47,8 +52,8 @@ class AuthProvider extends ChangeNotifier {
 
   AuthProvider(this._authRepository);
 
-  Future<void> signUp(String name, String surname, String email, String password) async {
-    _isLoading = true;
+  Future<bool> signUp(String name, String surname, String email, String password) async {
+   _isLoading = true;
     notifyListeners();
 
   try {
@@ -58,8 +63,10 @@ class AuthProvider extends ChangeNotifier {
       name: name,
       surname: surname
     );
+    return true;
   } catch (e) {
     print("Hata: $e");
+    return false;
   } finally {
     _isLoading = false;
     notifyListeners();
@@ -67,8 +74,8 @@ class AuthProvider extends ChangeNotifier {
   }
 
   Future<bool> signIn(String name, String password) async {
-  _isLoading = true;
-  notifyListeners();
+    _isLoading = true;
+    notifyListeners();
 
   try {
     bool isSuccess = await _authRepository.login(name: name, password: password);

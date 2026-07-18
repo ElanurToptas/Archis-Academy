@@ -143,17 +143,32 @@ class _RegisterViewState extends State<RegisterView> {
                       }
 
                       final authProvider = context.read<AuthProvider>();
-                      await authProvider.signUp(
+                      // 1. İşlemin sonucunu bir değişkene alın
+                      final success = await authProvider.signUp(
                         nameController.text,
                         surnameController.text,
                         emailController.text,
                         passwordController.text,
                       );
+                      debugPrint("Kayıt sonucu: $success");
+                      if (!mounted) return;
 
-                      if (mounted) {
+                      if (success) {
+                        debugPrint("Başarılı, ana sayfaya gidiliyor.");
                         context.go(AppRoutes.home);
+                      } else {
+                        debugPrint("Başarısız, hata mesajı gösteriliyor.");
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              LocaleKeys.auth_register_registerFailed.tr(),
+                            ),
+                            backgroundColor: Colors.red,
+                          ),
+                        );
                       }
                     },
+
                     child: Text(
                       LocaleKeys.auth_register_submit.tr(),
                       style: const TextStyle(fontSize: 16),

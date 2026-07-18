@@ -24,6 +24,7 @@
       "emptyFields": "Lütfen tüm alanları doldur!",
       "passwordTooShort": "Şifre en az 3 karakter olmalı!",
       "invalidEmail": "Lütfen geçerli bir e-posta adresi girin!",
+      "registerFailed": "Kayıt oluşturulamadı. Lütfen bilgilerinizi kontrol edin.",
       "submit": "Kayıt ol",
       "alreadyHaveAccount": "Zaten bir hesabın mı var? ",
       "login": "Giriş yap"

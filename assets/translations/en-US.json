@@ -24,6 +24,7 @@
       "emptyFields": "Please fill in all fields!",
       "passwordTooShort": "Password must be at least 3 characters long!",
       "invalidEmail": "Please enter a valid email address!",
+      "registerFailed": "Registration could not be created. Please check your information.",
       "submit": "Register",
       "alreadyHaveAccount": "Already have an account? ",
       "login": "Sign in"
