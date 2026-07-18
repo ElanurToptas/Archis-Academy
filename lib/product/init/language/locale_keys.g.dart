@@ -25,6 +25,7 @@ abstract class  LocaleKeys {
   static const auth_register_emptyFields = 'auth.register.emptyFields';
   static const auth_register_passwordTooShort = 'auth.register.passwordTooShort';
   static const auth_register_invalidEmail = 'auth.register.invalidEmail';
+  static const auth_register_registerFailed = 'auth.register.registerFailed';
   static const auth_register_submit = 'auth.register.submit';
   static const auth_register_alreadyHaveAccount = 'auth.register.alreadyHaveAccount';
   static const auth_register_login = 'auth.register.login';

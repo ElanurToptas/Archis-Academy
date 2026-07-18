@@ -37,8 +37,8 @@ class AuthProvider extends ChangeNotifier {
 
   AuthProvider(this._authRepository);
 
-  Future<void> signUp(String name, String surname, String email, String password) async {
-    _isLoading = true;
+  Future<bool> signUp(String name, String surname, String email, String password) async {
+   _isLoading = true;
     notifyListeners();
 
   try {
@@ -48,8 +48,10 @@ class AuthProvider extends ChangeNotifier {
       name: name,
       surname: surname
     );
+    return true;
   } catch (e) {
     print("Hata: $e");
+    return false;
   } finally {
     _isLoading = false;
     notifyListeners();
