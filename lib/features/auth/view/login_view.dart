@@ -96,17 +96,29 @@ class _LoginViewState extends State<LoginView> {
                       }
 
                       try {
-                        await context.read<AuthProvider>().signIn(
-                          nameController.text,
-                          passwordController.text,
-                        );
+                        final bool isSuccess = await context
+                            .read<AuthProvider>()
+                            .signIn(
+                              nameController.text,
+                              passwordController.text,
+                            );
 
                         if (!mounted) return;
 
-                        context.go(AppRoutes.home);
+                        if (isSuccess) {
+                          context.go(AppRoutes.home);
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                "Geçersiz kullanıcı adı veya şifre!",
+                              ), 
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                        }
                       } catch (e) {
                         if (!mounted) return;
-
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
                             content: Text(
@@ -117,7 +129,7 @@ class _LoginViewState extends State<LoginView> {
                         );
                       }
                     },
-                  
+
                     child: Text(
                       LocaleKeys.auth_login_title.tr(),
                       style: const TextStyle(fontSize: 16),
