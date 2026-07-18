@@ -46,7 +46,7 @@ jobs:
           if [ -z "$VERSION" ]; then VERSION="0.0.0"; fi
           if [ -z "$BUILD" ]; then BUILD="${GITHUB_RUN_NUMBER}"; fi
 
-          APK_NAME="castle-${VERSION}+${BUILD}-${DATE}"
+          APK_NAME="archis-academy-${VERSION}+${BUILD}-${DATE}"
 
           echo "APK_NAME=${APK_NAME}" >> "$GITHUB_ENV"
           echo "APP_VERSION=${VERSION}" >> "$GITHUB_ENV"
