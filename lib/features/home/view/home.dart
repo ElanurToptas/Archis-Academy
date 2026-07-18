@@ -43,98 +43,96 @@ class HomeHeroSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            LocaleKeys.home_heroTitle.tr(),
-            style: const TextStyle(
-              fontSize: 32,
-              fontWeight: FontWeight.bold,
-              color: Colors.black,
+    const verticalSpacing = SizedBox(height: 24);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          LocaleKeys.home_heroTitle.tr(),
+          style: const TextStyle(
+            fontSize: 32,
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
+          ),
+        ),
+        verticalSpacing,
+
+        SizedBox(
+          child: Text(
+            LocaleKeys.home_heroDescription.tr(),
+            style: const TextStyle(fontSize: 14, color: Colors.black87),
+          ),
+        ),
+        verticalSpacing,
+
+        Row(
+          children: [
+            _HeroButton(
+              text: LocaleKeys.home_ctaTrial.tr(),
+              onPressed: () => debugPrint("Trial tapped"),
+              isPrimary: true,
             ),
-          ),
-          const SizedBox(height: 24),
-
-          SizedBox(
-            child: Text(
-              LocaleKeys.home_heroDescription.tr(),
-              style: const TextStyle(fontSize: 14, color: Colors.black87),
+            const SizedBox(width: 8),
+            _HeroButton(
+              text: LocaleKeys.home_ctaDemo.tr(),
+              onPressed: () => debugPrint("Demo tapped"),
             ),
-          ),
-          const SizedBox(height: 24),
+          ],
+        ),
+        verticalSpacing,
 
-          Row(
-            children: [
-              ElevatedButton(
-                onPressed: () {},
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF0050D9),
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 18,
-                    vertical: 12,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  elevation: 0,
-                ),
-                child: Text(
-                  LocaleKeys.home_ctaTrial.tr(),
-                  style: const TextStyle(fontSize: 13),
-                ),
-              ),
-              SizedBox(width: 8),
+        Wrap(
+          spacing: 24,
+          runSpacing: 14,
+          alignment: WrapAlignment.start,
+          children: [
+            _FeatureItem(
+              icon: Icons.school_outlined,
+              text: LocaleKeys.home_features_appliedLearning.tr(),
+              iconColor: const Color(0xFFFF5722),
+            ),
+            _FeatureItem(
+              icon: Icons.emoji_events_outlined,
+              text: LocaleKeys.home_features_mentorSupport.tr(),
+              iconColor: const Color(0xFF00BCD4),
+            ),
+            _FeatureItem(
+              icon: Icons.rocket_launch_outlined,
+              text: LocaleKeys.home_features_realProjects.tr(),
+              iconColor: const Color(0xFF2196F3),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+}
 
-              ElevatedButton(
-                onPressed: () {},
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.white,
-                  foregroundColor: Colors.black,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 12,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-                child: Text(
-                  LocaleKeys.home_ctaDemo.tr(),
-                  style: const TextStyle(fontSize: 13),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 24),
+class _HeroButton extends StatelessWidget {
+  final String text;
+  final VoidCallback? onPressed;
+  final bool isPrimary;
 
-          Wrap(
-            spacing: 24,
-            runSpacing: 14,
-            alignment: WrapAlignment.start,
-            children:  [
-              _FeatureItem(
-                icon: Icons.school_outlined,
-                text: LocaleKeys.home_features_appliedLearning.tr(),
-                iconColor: const Color(0xFFFF5722),
-              ),
-              _FeatureItem(
-                icon: Icons.emoji_events_outlined,
-                text: LocaleKeys.home_features_mentorSupport.tr(),
-                iconColor: const Color(0xFF00BCD4),
-              ),
-              _FeatureItem(
-                icon: Icons.rocket_launch_outlined,
-                text: LocaleKeys.home_features_realProjects.tr(),
-                iconColor: const Color(0xFF2196F3),
-              ),
-            ],
-          ),
-        ],
+  const _HeroButton({
+    required this.text,
+    this.onPressed,
+    this.isPrimary = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+      onPressed: onPressed,
+      style: ElevatedButton.styleFrom(
+        backgroundColor: isPrimary ? const Color(0xFF0050D9) : Colors.white,
+        foregroundColor: isPrimary ? Colors.white : Colors.black,
+        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        elevation: 0,
       ),
+      child: Text(text, style: const TextStyle(fontSize: 13)),
     );
   }
 }
