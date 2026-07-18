@@ -1,0 +1,78 @@
+name: Build Flutter APK
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+
+jobs:
+  build-apk:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Prevent recursion
+        if: ${{ github.actor == 'github-actions[bot]' }}
+        run: exit 0
+
+      - name: Install Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.32.6'
+          channel: stable
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Read version from pubspec.yaml
+        id: vars
+        shell: bash
+        run: |
+          VERSION_LINE=$(grep '^version:' pubspec.yaml || true)
+          VERSION=$(echo "$VERSION_LINE" | sed -E "s/version:[[:space:]]*([0-9]+\.[0-9]+\.[0-9]+).*/\1/" || true)
+          BUILD=$(echo "$VERSION_LINE" | sed -E "s/.*\+([0-9]+).*/\1/" || true)
+          DATE=$(date +'%Y%m%d')
+
+          if [ -z "$VERSION" ]; then VERSION="0.0.0"; fi
+          if [ -z "$BUILD" ]; then BUILD="${GITHUB_RUN_NUMBER}"; fi
+
+          APK_NAME="castle-${VERSION}+${BUILD}-${DATE}"
+
+          echo "APK_NAME=${APK_NAME}" >> "$GITHUB_ENV"
+          echo "APP_VERSION=${VERSION}" >> "$GITHUB_ENV"
+          echo "APP_BUILD=${BUILD}" >> "$GITHUB_ENV"
+
+      - name: Build APK
+        run: flutter build apk --release --no-shrink
+
+      - name: Prepare APK artifact
+        shell: bash
+        run: |
+          mkdir -p artifacts
+          cp build/app/outputs/flutter-apk/app-release.apk "artifacts/${APK_NAME}.apk"
+          ls -la artifacts
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.APK_NAME }}
+          path: artifacts/*.apk
+          retention-days: 7
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: apk-${{ env.APP_VERSION }}-${{ env.APP_BUILD }}-${{ github.run_number }}
+          name: APK ${{ env.APP_VERSION }}+${{ env.APP_BUILD }}
+          files: artifacts/*.apk
+          generate_release_notes: true
