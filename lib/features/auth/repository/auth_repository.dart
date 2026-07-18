@@ -56,28 +56,25 @@ class AuthProvider extends ChangeNotifier {
 
   AuthProvider(this._authRepository);
 
-  Future<void> signUp(
-    String name,
-    String surname,
-    String email,
-    String password,
-  ) async {
-    _isLoading = true;
+  Future<bool> signUp(String name, String surname, String email, String password) async {
+   _isLoading = true;
     notifyListeners();
 
-    try {
-      await _authRepository.register(
-        email: email,
-        password: password,
-        name: name,
-        surname: surname,
-      );
-    } catch (e) {
-      print("Hata: $e");
-    } finally {
-      _isLoading = false;
-      notifyListeners();
-    }
+  try {
+    await _authRepository.register(
+      email: email, 
+      password: password, 
+      name: name,
+      surname: surname
+    );
+    return true;
+  } catch (e) {
+    print("Hata: $e");
+    return false;
+  } finally {
+    _isLoading = false;
+    notifyListeners();
+  }
   }
 
   Future<bool> signIn(String name, String password) async {
