@@ -117,7 +117,7 @@ class _LoginViewState extends State<LoginView> {
                         );
                       }
                     },
-
+                  
                     child: Text(
                       LocaleKeys.auth_login_title.tr(),
                       style: const TextStyle(fontSize: 16),
@@ -150,30 +150,4 @@ class _LoginViewState extends State<LoginView> {
       ),
     );
   }
-}
-
-@override
-Widget build(BuildContext context) {
-  return Scaffold(
-    body: SafeArea(
-      child: Center(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            children: [
-              Text(
-                LocaleKeys.auth_login_title.tr(),
-                style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-              const SizedBox(height: 30),
-              // Add your login form here
-            ],
-          ),
-        ),
-      ),
-    ),
-  );
 }

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 abstract class IAuthRepository {
   Future<void> register({
@@ -9,9 +9,11 @@ abstract class IAuthRepository {
     required String surname,
   });
   Future<bool> login({required String name, required String password});
+  Future<bool> checkAuthStatus();
 }
 
 class AuthRepository implements IAuthRepository {
+  final _secureStorage = const FlutterSecureStorage();
   @override
   Future<void> register({
     required String email,
@@ -19,34 +21,32 @@ class AuthRepository implements IAuthRepository {
     required String name,
     required String surname,
   }) async {
-    try {
-      final prefs = await SharedPreferences.getInstance();
-
-      await prefs.setString('user_email', email);
-      await prefs.setString('user_name', name);
-      await prefs.setString('user_surname', surname);
-      await prefs.setString('user_password', password);
-      await prefs.setBool('is_logged_in', true);
-    } catch (e) {
-      throw Exception(
-        "Kayıt işlemi sırasında bir hata oluştu: ${e.toString()}",
-      );
-    }
+    await _secureStorage.write(key: 'user_email', value: email);
+    await _secureStorage.write(key: 'user_name', value: name);
+    await _secureStorage.write(key: 'user_surname', value: surname);
+    await _secureStorage.write(key: 'user_password', value: password);
+    await _secureStorage.write(key: 'is_logged_in', value: 'true');
   }
 
   @override
   Future<bool> login({required String name, required String password}) async {
-    final prefs = await SharedPreferences.getInstance();
-
-    final String? savedName = prefs.getString('user_name');
-    final String? savedPassword = prefs.getString('user_password');
+    final String? savedName = await _secureStorage.read(key: 'user_name');
+    final String? savedPassword = await _secureStorage.read(
+      key: 'user_password',
+    );
 
     if (savedName == name && savedPassword == password) {
-      await prefs.setBool('is_logged_in', true);
+      await _secureStorage.write(key: 'is_logged_in', value: 'true');
       return true;
-    } else {
-      throw Exception("Kullanıcı adı veya şifre yanlış.");
     }
+
+    return false;
+  }
+
+  @override
+  Future<bool> checkAuthStatus() async {
+    final String? isLoggedIn = await _secureStorage.read(key: 'is_logged_in');
+    return isLoggedIn == 'true';
   }
 }
 
@@ -57,7 +57,7 @@ class AuthProvider extends ChangeNotifier {
 
   AuthProvider(this._authRepository);
 
-  Future<void> signUp(
+  Future<bool> signUp(
     String name,
     String surname,
     String email,
@@ -73,8 +73,10 @@ class AuthProvider extends ChangeNotifier {
         name: name,
         surname: surname,
       );
+      return true;
     } catch (e) {
-     rethrow;
+      print("Hata: $e");
+      return false;
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -92,10 +94,14 @@ class AuthProvider extends ChangeNotifier {
       );
       return isSuccess;
     } catch (e) {
-      rethrow;
+      return false;
     } finally {
       _isLoading = false;
       notifyListeners();
     }
+  }
+
+  Future<bool> isAuthenticated() async {
+    return await _authRepository.checkAuthStatus();
   }
 }
