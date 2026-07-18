@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -96,23 +95,26 @@ class _LoginViewState extends State<LoginView> {
                         return;
                       }
 
-                      final success = await context.read<AuthProvider>().signIn(
-                        nameController.text,
-                        passwordController.text,
-                      );
+                      try {
+                        await context.read<AuthProvider>().signIn(
+                          nameController.text,
+                          passwordController.text,
+                        );
 
-                      if (mounted) {
-                        if (success) {
-                          context.go(AppRoutes.home);
-                        } else {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(
-                                LocaleKeys.auth_login_invalidCredentials.tr(),
-                              ),
+                        if (!mounted) return;
+
+                        context.go(AppRoutes.home);
+                      } catch (e) {
+                        if (!mounted) return;
+
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              "${e.toString().replaceAll("Exception: ", "")}",
                             ),
-                          );
-                        }
+                            backgroundColor: Colors.red,
+                          ),
+                        );
                       }
                     },
                   
