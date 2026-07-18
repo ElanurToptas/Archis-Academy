@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 abstract class IAuthRepository {
   Future<void> register({required String email, required String password, required String name, required String surname});
@@ -8,32 +8,34 @@ abstract class IAuthRepository {
 }
 
 class AuthRepository implements IAuthRepository {
+  final _secureStorage = const FlutterSecureStorage();
   @override
   Future<void> register({required String email, required String password, required String name, required String surname}) async {
-    final prefs = await SharedPreferences.getInstance();
     
-    await prefs.setString('user_email', email);
-    await prefs.setString('user_name', name);
-    await prefs.setString('user_surname', surname);
-    await prefs.setString('user_password', password);
-    await prefs.setBool('is_logged_in', true);
+    await _secureStorage.write(key: 'user_email', value: email);
+    await _secureStorage.write(key: 'user_name', value: name);
+    await _secureStorage.write(key: 'user_surname', value: surname);
+    await _secureStorage.write(key: 'user_password', value: password);
+    await _secureStorage.write(key: 'is_logged_in', value: 'true');
   }
 
    @override
   Future<bool> login({required String name, required String password}) async {
-    final prefs = await SharedPreferences.getInstance();
+    final String? savedName = await _secureStorage.read(key: 'user_name');
+    final String? savedPassword = await _secureStorage.read(key: 'user_password');
+
+    if (savedName == name && savedPassword == password) {
+      await _secureStorage.write(key: 'is_logged_in', value: 'true');
+      return true;
+    }
     
-    final String? savedName = prefs.getString('user_name');
-    final String? savedPassword = prefs.getString('user_password'); 
-
-
-    return (savedName == name && savedPassword == password);
+    return false;
   }
 
   @override
   Future<bool> checkAuthStatus() async {
-    final prefs = await SharedPreferences.getInstance(); 
-    return prefs.getBool('is_logged_in') ?? false;
+    final String? isLoggedIn = await _secureStorage.read(key: 'is_logged_in');
+    return isLoggedIn == 'true';
   }
 
 }
@@ -79,7 +81,7 @@ class AuthProvider extends ChangeNotifier {
   }
 }
 
-Future<bool> get isAuthenticated async {
+Future<bool> isAuthenticated() async {
   return await _authRepository.checkAuthStatus();
 }
 }
