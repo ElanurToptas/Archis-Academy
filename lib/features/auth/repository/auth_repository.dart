@@ -1,52 +1,86 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import '../model/register_model.dart';
 
 abstract class IAuthRepository {
-  Future<void> register({
-    required String email,
-    required String password,
-    required String name,
-    required String surname,
-  });
+  Future<void> register(RegisterModel model);
+
   Future<bool> login({required String name, required String password});
   Future<bool> checkAuthStatus();
+  Future<void> logout();
 }
 
 class AuthRepository implements IAuthRepository {
-  final _secureStorage = const FlutterSecureStorage();
+  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
   @override
-  Future<void> register({
-    required String email,
-    required String password,
-    required String name,
-    required String surname,
-  }) async {
-    await _secureStorage.write(key: 'user_email', value: email);
-    await _secureStorage.write(key: 'user_name', value: name);
-    await _secureStorage.write(key: 'user_surname', value: surname);
-    await _secureStorage.write(key: 'user_password', value: password);
-    await _secureStorage.write(key: 'is_logged_in', value: 'true');
+  Future<void> register(RegisterModel model) async {
+    UserCredential? userCredential;
+
+    try {
+      String? fcmToken = await FirebaseMessaging.instance.getToken();
+
+      userCredential = await _firebaseAuth.createUserWithEmailAndPassword(
+        email: model.email.trim(),
+        password: model.password.trim(),
+      );
+
+      final String uid = userCredential.user!.uid;
+
+      final updatedModelMap = model.toFirestoreMap(uid);
+      updatedModelMap['fcmToken'] = fcmToken;
+
+      await _firestore.collection('users').doc(uid).set(updatedModelMap);
+      await userCredential.user!.updateDisplayName(
+        "${model.name} ${model.surname}",
+      );
+      await _firebaseAuth.signOut();
+    } catch (e) {
+      if (userCredential?.user != null) {
+        try {
+          await userCredential!.user!.delete();
+        } catch (_) {}
+        await _firebaseAuth.signOut();
+      }
+      rethrow;
+    }
   }
 
   @override
   Future<bool> login({required String name, required String password}) async {
-    final String? savedName = await _secureStorage.read(key: 'user_name');
-    final String? savedPassword = await _secureStorage.read(
-      key: 'user_password',
-    );
+    try {
+      final query = await _firestore
+          .collection('users')
+          .where('name', isEqualTo: name.trim())
+          .get();
 
-    if (savedName == name && savedPassword == password) {
-      await _secureStorage.write(key: 'is_logged_in', value: 'true');
+      if (query.docs.isEmpty) {
+        return false;
+      }
+
+      final String email = query.docs.first.data()['email'] as String;
+
+      await _firebaseAuth.signInWithEmailAndPassword(
+        email: email.trim(),
+        password: password.trim(),
+      );
       return true;
+    } catch (e) {
+      return false;
     }
-
-    return false;
   }
 
   @override
   Future<bool> checkAuthStatus() async {
-    final String? isLoggedIn = await _secureStorage.read(key: 'is_logged_in');
-    return isLoggedIn == 'true';
+    return _firebaseAuth.currentUser != null;
+  }
+
+  @override
+  Future<void> logout() async {
+    await _firebaseAuth.signOut();
   }
 }
 
@@ -57,25 +91,15 @@ class AuthProvider extends ChangeNotifier {
 
   AuthProvider(this._authRepository);
 
-  Future<bool> signUp(
-    String name,
-    String surname,
-    String email,
-    String password,
-  ) async {
+  Future<bool> signUp(RegisterModel model) async {
     _isLoading = true;
     notifyListeners();
 
     try {
-      await _authRepository.register(
-        email: email,
-        password: password,
-        name: name,
-        surname: surname,
-      );
+      await _authRepository.register(model);
       return true;
     } catch (e) {
-      print("Hata: $e");
+      print("Kayıt Hatası: $e");
       return false;
     } finally {
       _isLoading = false;
@@ -103,5 +127,10 @@ class AuthProvider extends ChangeNotifier {
 
   Future<bool> isAuthenticated() async {
     return await _authRepository.checkAuthStatus();
+  }
+
+  Future<void> signOut() async {
+    await _authRepository.logout();
+    notifyListeners();
   }
 }

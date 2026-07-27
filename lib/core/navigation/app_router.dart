@@ -27,10 +27,6 @@ final router = GoRouter(
     if (!isLoggedIn && !isGoingToLogin && !isGoingToRegister) {
       return AppRoutes.login;
     }
-
-    if (isLoggedIn && (isGoingToLogin || isGoingToRegister)) {
-      return AppRoutes.home;
-    }
     
     return null; 
   },

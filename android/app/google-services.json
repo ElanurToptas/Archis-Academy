@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "964881487423",
+    "project_id": "archis-academy",
+    "storage_bucket": "archis-academy.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:964881487423:android:0ce39e8930e4f8c115ca8a",
+        "android_client_info": {
+          "package_name": "com.example.archis_academy"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAZE4AnIu3Kgf2URRaxSy_WoamHX0V3_OM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

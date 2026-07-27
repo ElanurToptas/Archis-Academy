@@ -1,4 +1,5 @@
 import 'package:archis_academy/core/navigation/app_router.dart';
+import 'package:archis_academy/features/auth/model/register_model.dart';
 import 'package:archis_academy/features/auth/widgets/custom_text_field.dart';
 import 'package:archis_academy/features/auth/repository/auth_repository.dart';
 import 'package:archis_academy/product/init/language/locale_keys.g.dart';
@@ -143,19 +144,23 @@ class _RegisterViewState extends State<RegisterView> {
                       }
 
                       final authProvider = context.read<AuthProvider>();
-                      // 1. İşlemin sonucunu bir değişkene alın
-                      final success = await authProvider.signUp(
-                        nameController.text,
-                        surnameController.text,
-                        emailController.text,
-                        passwordController.text,
+
+                      final registerModel = RegisterModel(
+                        name: nameController.text.trim(),
+                        surname: surnameController.text.trim(),
+                        email: emailController.text.trim(),
+                        password: passwordController.text.trim(),
                       );
+
+                   
+                      final success = await authProvider.signUp(registerModel);
+
                       debugPrint("Kayıt sonucu: $success");
                       if (!mounted) return;
 
                       if (success) {
                         debugPrint("Başarılı, ana sayfaya gidiliyor.");
-                        context.go(AppRoutes.home);
+                        context.go(AppRoutes.login);
                       } else {
                         debugPrint("Başarısız, hata mesajı gösteriliyor.");
                         ScaffoldMessenger.of(context).showSnackBar(

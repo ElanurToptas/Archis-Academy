@@ -99,8 +99,8 @@ class _LoginViewState extends State<LoginView> {
                         final bool isSuccess = await context
                             .read<AuthProvider>()
                             .signIn(
-                              nameController.text,
-                              passwordController.text,
+                              nameController.text.trim(),
+                              passwordController.text.trim(),
                             );
 
                         if (!mounted) return;

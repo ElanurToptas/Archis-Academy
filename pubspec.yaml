@@ -42,6 +42,11 @@ dependencies:
   translator: ^1.0.4+1
   easy_localization: ^3.0.8
   flutter_secure_storage: ^10.3.1
+  firebase_core: ^4.7.0        
+  cloud_firestore: ^6.3.0        
+  firebase_auth: ^6.4.0         
+  firebase_storage: ^13.4.1 
+  firebase_messaging: ^16.4.3
 
 dev_dependencies:
   flutter_test:
