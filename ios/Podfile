@@ -1,6 +1,4 @@
-platform :ios, '13.0'
-
-# Flutter'ın kendi iç ayarlarını okuduğu zorunlu alan
+# Podfile dosyasının en başında Flutter ayar dosyasını zorunlu olarak yüklüyoruz
 import_with_filter = File.expand_path(File.join('..', '..', '.symlinks', 'plugins'))
 if File.exist?(import_with_filter)
   Dir.glob(File.join(import_with_filter, '*', 'ios', 'Podfile')).each do |podfile|
@@ -8,10 +6,35 @@ if File.exist?(import_with_filter)
   end
 end
 
+# Flutter'ın kendi ürettiği gizli yardımcı kodları projeye dahil ediyoruz
+flutter_ios_podfile_setup_path = File.expand_path(File.join('..', '..', '.flutter-plugins-dependencies'))
+if File.exist?(flutter_ios_podfile_setup_path)
+  # Eğer bağımlılık dosyası varsa yükle
+else
+  # Dosya yoksa Flutter'ın iç fonksiyonlarını tanımla
+  def flutter_root
+    generated_xcode_build_settings_path = File.expand_path(File.join('..', 'Flutter', 'Generated.xcconfig'))
+    unless File.exist?(generated_xcode_build_settings_path)
+      raise "Generated.xcconfig dosyası bulunamadı. Lütfen önce 'flutter pub get' çalıştırın."
+    end
+    File.foreach(generated_xcode_build_settings_path) do |line|
+      matches = line.match(/FLUTTER_ROOT=(.+)/)
+      return matches[1].strip if matches
+    end
+    raise "FLUTTER_ROOT tanımlanamadı."
+  end
+  
+  # Flutter scriptlerini yüklüyoruz
+  require File.expand_path(File.join('packages', 'flutter_tools', 'bin', 'podhelper'), flutter_root)
+end
+
+platform :ios, '13.0'
+
 target 'Runner' do
   use_frameworks!
   use_modular_headers!
 
+  # Artık yukarıdaki script yüklendiği için bu komut sorunsuz çalışacaktır
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
 end
 
