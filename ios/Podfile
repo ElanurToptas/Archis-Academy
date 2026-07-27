@@ -4,7 +4,7 @@ platform :ios, '15.0'
 # Firebase paketlerinin hata vermesini engellemek için sürümü en başta zorluyoruz
 config = File.read('Runner.xcodeproj/project.pbxproj')
 if config.include?('IPHONEOS_DEPLOYMENT_TARGET')
-  config.gsub!(/IPHONEOS_DEPLOYMENT_TARGET = [0-9.]*;/, "IPHONEOS_DEPLOYMENT_TARGET = 13.0;")
+  config.gsub!(/IPHONEOS_DEPLOYMENT_TARGET = [0-9.]*;/, "IPHONEOS_DEPLOYMENT_TARGET = 15.0;")
   File.open('Runner.xcodeproj/project.pbxproj', 'w') { |file| file.puts config }
 end
 
