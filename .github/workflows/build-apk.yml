@@ -76,7 +76,7 @@ jobs:
           path: artifacts/*.apk
           retention-days: 7
 
-  # --- IOS DERLEME İŞİ ---
+    # --- IOS DERLEME İŞİ ---
   build-ipa:
     runs-on: macos-latest
     steps:
@@ -117,6 +117,12 @@ jobs:
           IPA_NAME="archis-academy-${VERSION}+${BUILD}-${DATE}"
           echo "IPA_NAME=${IPA_NAME}" >> "$GITHUB_ENV"
 
+      # Kilit Adım: Pod bağımlılıklarını Mac üzerinde el ile yüklüyoruz
+      - name: Install CocoaPods Dependencies
+        run: |
+          cd ios
+          pod install
+
       - name: Build IPA (Unsigned)
         run: flutter build ipa --release --no-codesign
 
@@ -124,7 +130,6 @@ jobs:
         shell: bash
         run: |
           mkdir -p ios_artifacts
-          # Flutter imzasız derlemede ürünü payload klasörüne koyar, onu zipleyip .ipa yapıyoruz
           cd build/ios/archive/Runner.xcarchive/Products/Applications
           mkdir Payload
           mv Runner.app Payload/
