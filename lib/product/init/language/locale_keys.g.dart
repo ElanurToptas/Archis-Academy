@@ -42,5 +42,26 @@ abstract class  LocaleKeys {
   static const home = 'home';
   static const video_loadError = 'video.loadError';
   static const video = 'video';
+  static const voice_title = 'voice.title';
+  static const voice_micPermissionRequiredTitle = 'voice.micPermissionRequiredTitle';
+  static const voice_micPermissionRequiredMessage = 'voice.micPermissionRequiredMessage';
+  static const voice_cancel = 'voice.cancel';
+  static const voice_openSettings = 'voice.openSettings';
+  static const voice_permissionDenied = 'voice.permissionDenied';
+  static const voice_startFailed = 'voice.startFailed';
+  static const voice_saveFailed = 'voice.saveFailed';
+  static const voice_uploadFailed = 'voice.uploadFailed';
+  static const voice_playbackFailed = 'voice.playbackFailed';
+  static const voice_loadErrorWithDetails = 'voice.loadErrorWithDetails';
+  static const voice_emptyState = 'voice.emptyState';
+  static const voice_recordLabel = 'voice.recordLabel';
+  static const voice_today = 'voice.today';
+  static const voice_dateTime = 'voice.dateTime';
+  static const voice_uploading = 'voice.uploading';
+  static const voice_recordingStatus = 'voice.recordingStatus';
+  static const voice_waitingStatus = 'voice.waitingStatus';
+  static const voice_startButton = 'voice.startButton';
+  static const voice_stopButton = 'voice.stopButton';
+  static const voice = 'voice';
 
 }

@@ -43,5 +43,27 @@
   },
   "video": {
     "loadError": "Video yükleme hatası"
+  },
+  "voice": {
+    "title": "Kayıtlarım",
+    "micPermissionRequiredTitle": "Mikrofon izni gerekli",
+    "micPermissionRequiredMessage": "Kayıt yapabilmek için mikrofon iznini ayarlardan açmanız gerekiyor.",
+    "cancel": "Vazgeç",
+    "openSettings": "Ayarlara git",
+    "permissionDenied": "Mikrofon izni verilmedi.",
+    "startFailed": "Kayıt başlatılamadı. Lütfen tekrar deneyin.",
+    "saveFailed": "Kayıt kaydedilemedi.",
+    "uploadFailed": "Kayıt yüklenirken hata oluştu.",
+    "playbackFailed": "Ses oynatılamadı.",
+    "loadErrorWithDetails": "Kayıtlar yüklenemedi: %s",
+    "emptyState": "Henüz kayıt yok",
+    "recordLabel": "Kayıt (%s)",
+    "today": "Bugün · %s",
+    "dateTime": "%s · %s",
+    "uploading": "Kayıt yükleniyor...",
+    "recordingStatus": "Kaydediliyor · %s",
+    "waitingStatus": "Kayıt bekleniyor",
+    "startButton": "Kaydı başlat",
+    "stopButton": "Bitir & yükle"
   }
 }
