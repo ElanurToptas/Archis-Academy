@@ -8,38 +8,38 @@ class AuthException implements Exception {
 
 class InvalidCredentialsException extends AuthException {
   InvalidCredentialsException()
-      : super('Kullanıcı adı veya şifre hatalı.');
+      : super('Incorrect username or password.');
 }
 
 class UserNotFoundException extends AuthException {
   UserNotFoundException()
-      : super('Bu kullanıcı adı ile kayıtlı bir hesap bulunamadı.');
+      : super('No account found with this username.');
 }
 
 class WrongPasswordException extends AuthException {
   WrongPasswordException()
-      : super('Şifre yanlış. Lütfen kontrol edip tekrar deneyin.');
+      : super('Password is incorrect. Please check and try again.');
 }
 
 class WeakPasswordException extends AuthException {
   WeakPasswordException()
-      : super('Şifre çok zayıf. En az 6 karakter kullanın.');
+      : super('Password is too weak. Please use at least 6 characters.');
 }
 
 class EmailAlreadyInUseException extends AuthException {
   EmailAlreadyInUseException()
-      : super('Bu e-posta adresi zaten kayıtlı.');
+      : super('An account with this email address already exists.');
 }
 
 class InvalidEmailException extends AuthException {
-  InvalidEmailException() : super('Geçersiz e-posta adresi.');
+  InvalidEmailException() : super('Invalid email address.');
 }
 
 class NetworkException extends AuthException {
-  NetworkException() : super('İnternet bağlantısı bulunamadı. Lütfen tekrar deneyin.');
+  NetworkException() : super('No internet connection. Please try again.');
 }
 
 class TooManyRequestsException extends AuthException {
   TooManyRequestsException()
-      : super('Çok fazla deneme yapıldı. Lütfen kısa süre sonra tekrar deneyin.');
+      : super('Too many attempts. Please try again later.');
 }
