@@ -1,8 +1,12 @@
+import 'package:archis_academy/core/navigation/app_router.dart';
+import 'package:archis_academy/features/auth/repository/auth_repository.dart';
 import 'package:archis_academy/features/home/widgets/video_section.dart';
 import 'package:archis_academy/product/init/language/locale_keys.g.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -12,6 +16,12 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  Future<void> _logout() async {
+    await context.read<AuthProvider>().signOut();
+    if (!mounted) return;
+    context.go(AppRoutes.login);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -22,6 +32,15 @@ class _HomePageState extends State<HomePage> {
           padding: const EdgeInsets.only(top: 24),
           child: SvgPicture.asset('assets/images/logo.svg', height: 32),
         ),
+        actions: [
+          IconButton(
+            onPressed: () async {
+              await _logout();
+            },
+            icon: const Icon(Icons.logout),
+            tooltip: 'Logout',
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24),

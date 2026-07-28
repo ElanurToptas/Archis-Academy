@@ -121,12 +121,11 @@ class _RegisterViewState extends State<RegisterView> {
                         );
                         return;
                       }
-                      if (passwordController.text.length < 3) {
+                      if (passwordController.text.length < 6) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
-                            content: Text(
-                              LocaleKeys.auth_register_passwordTooShort.tr(),
-                            ),
+                            content: const Text('Şifre en az 6 karakter olmalı.'),
+                            backgroundColor: Colors.red,
                           ),
                         );
                         return;
@@ -155,18 +154,16 @@ class _RegisterViewState extends State<RegisterView> {
                    
                       final success = await authProvider.signUp(registerModel);
 
-                      debugPrint("Kayıt sonucu: $success");
                       if (!mounted) return;
 
                       if (success) {
-                        debugPrint("Başarılı, ana sayfaya gidiliyor.");
                         context.go(AppRoutes.login);
                       } else {
-                        debugPrint("Başarısız, hata mesajı gösteriliyor.");
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
                             content: Text(
-                              LocaleKeys.auth_register_registerFailed.tr(),
+                              authProvider.errorMessage ??
+                                  'Kayıt işlemi başarısız oldu.',
                             ),
                             backgroundColor: Colors.red,
                           ),
