@@ -37,7 +37,7 @@ class _HomePageState extends State<HomePage> {
             onPressed: () async {
               await _logout();
             },
-            icon: const Icon(Icons.logout),
+            icon: const Icon(Icons.logout_rounded, size: 24),
             tooltip: 'Logout',
           ),
         ],
@@ -50,6 +50,7 @@ class _HomePageState extends State<HomePage> {
             SizedBox(height: 32),
             VideoApp(),
             SizedBox(height: 32),
+            
           ],
         ),
       ),

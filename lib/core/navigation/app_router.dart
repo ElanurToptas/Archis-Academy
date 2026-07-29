@@ -1,5 +1,9 @@
+import 'package:archis_academy/app_view.dart';
 import 'package:archis_academy/features/auth/repository/auth_repository.dart';
 import 'package:archis_academy/features/home/view/home.dart';
+import 'package:archis_academy/features/locations/views/locations.dart';
+import 'package:archis_academy/features/voice/views/voice.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../features/auth/view/register_view.dart';
@@ -11,24 +15,27 @@ class AppRoutes {
   static const register = '/register';
   static const login = '/login';
   static const home = '/';
+  static const locations = '/locations';
+  static const voice = '/voice';
 }
 
-final authRepo = AuthRepository(); 
+final authRepo = AuthRepository();
 
 final router = GoRouter(
   navigatorKey: _rootKey,
   redirect: (context, state) async {
-    
     final isLoggedIn = await authRepo.checkAuthStatus();
-    
+
     final isGoingToLogin = state.matchedLocation == AppRoutes.login;
     final isGoingToRegister = state.matchedLocation == AppRoutes.register;
 
     if (!isLoggedIn && !isGoingToLogin && !isGoingToRegister) {
       return AppRoutes.login;
+    } else {
+      AppRoutes.home;
     }
-    
-    return null; 
+
+    return null;
   },
   routes: [
     GoRoute(
@@ -39,9 +46,39 @@ final router = GoRouter(
       path: AppRoutes.login,
       pageBuilder: (context, state) => _buildPage(const LoginView(), state),
     ),
-    GoRoute(
-      path: AppRoutes.home,
-      pageBuilder: (context, state) => _buildPage(const HomePage(), state),
+    StatefulShellRoute.indexedStack(
+      builder: (context, state, navigationShell) {
+        return AppView(navigationShell: navigationShell);
+      },
+      branches: [
+        StatefulShellBranch(
+          routes: [
+            GoRoute(
+              path: AppRoutes.home,
+              pageBuilder: (context, state) =>
+                  _buildPage(const HomePage(), state),
+            ),
+          ],
+        ),
+        StatefulShellBranch(
+          routes: [
+            GoRoute(
+              path: AppRoutes.voice,
+              pageBuilder: (context, state) =>
+                  _buildPage(const VoicePage(), state),
+            ),
+          ],
+        ),
+        StatefulShellBranch(
+          routes: [
+            GoRoute(
+              path: AppRoutes.locations,
+              pageBuilder: (context, state) =>
+                  _buildPage(const LocationsPage(), state),
+            ),
+          ],
+        ),
+      ],
     ),
   ],
 );

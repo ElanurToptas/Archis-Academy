@@ -43,7 +43,12 @@ class AuthRepository implements IAuthRepository {
     UserCredential? userCredential;
 
     try {
-      String? fcmToken = await FirebaseMessaging.instance.getToken();
+      String? fcmToken;
+    try {
+      fcmToken = await FirebaseMessaging.instance.getToken();
+    } catch (_) {
+      fcmToken = null; 
+    }
 
       userCredential = await _firebaseAuth.createUserWithEmailAndPassword(
         email: model.email.trim(),
