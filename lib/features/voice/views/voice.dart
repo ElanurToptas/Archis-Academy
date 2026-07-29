@@ -54,8 +54,8 @@ class _VoicePageState extends State<VoicePage> {
   void dispose() {
     _elapsedTimer?.cancel();
     if (_isRecording) {
-    _audioRecorder.stop();
-  }
+      _audioRecorder.stop();
+    }
     _audioRecorder.dispose();
     _audioPlayer.dispose();
     super.dispose();
@@ -161,7 +161,6 @@ class _VoicePageState extends State<VoicePage> {
           userId: _currentUserId,
           durationSeconds: duration.inSeconds,
         );
-        
 
         if (!mounted) return;
         setState(() {
@@ -211,17 +210,28 @@ class _VoicePageState extends State<VoicePage> {
     return '$minutes:$secondsStr';
   }
 
-    String _formatTimestamp(DateTime dt) {
+  String _replaceLocalizationArgs(String text, List<Object> args) {
+    var result = text;
+    for (final arg in args) {
+      result = result.replaceFirst('%s', arg.toString());
+    }
+    return result;
+  }
+
+  String _formatTimestamp(DateTime dt) {
     final now = DateTime.now();
     final isToday =
         dt.year == now.year && dt.month == now.month && dt.day == now.day;
     final time =
         '${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}';
+    final date = '${dt.day}.${dt.month}.${dt.year}';
     return isToday
-        ? LocaleKeys.voice_today.tr(args: [time])
-        : LocaleKeys.voice_dateTime.tr(args: ['${dt.day}.${dt.month}.${dt.year}', time]);
+        ? _replaceLocalizationArgs(LocaleKeys.voice_today.tr(), [time])
+        : _replaceLocalizationArgs(
+            LocaleKeys.voice_dateTime.tr(),
+            [date, time],
+          );
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -236,7 +246,10 @@ class _VoicePageState extends State<VoicePage> {
                 children: [
                   Text(
                     LocaleKeys.voice_title.tr(),
-                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ],
               ),
@@ -252,13 +265,14 @@ class _VoicePageState extends State<VoicePage> {
                   if (snapshot.hasError) {
                     return Center(
                       child: Text(
-                        LocaleKeys.voice_loadErrorWithDetails.tr(
-                          args: ['${snapshot.error}'],
+                        _replaceLocalizationArgs(
+                          LocaleKeys.voice_loadErrorWithDetails.tr(),
+                          ['${snapshot.error}'],
                         ),
                       ),
                     );
                   }
-  final recordings = snapshot.data ?? [];
+                  final recordings = snapshot.data ?? [];
 
                   if (recordings.isEmpty) {
                     return Center(
@@ -279,12 +293,21 @@ class _VoicePageState extends State<VoicePage> {
                       return ListTile(
                         contentPadding: EdgeInsets.zero,
                         leading: CircleAvatar(
-                          backgroundColor: const Color.fromARGB(255, 245, 232, 245),
-                          child: Icon(Icons.mic, color: const Color.fromARGB(255, 142, 56, 139)),
+                          backgroundColor: const Color.fromARGB(
+                            255,
+                            245,
+                            232,
+                            245,
+                          ),
+                          child: Icon(
+                            Icons.mic,
+                            color: const Color.fromARGB(255, 142, 56, 139),
+                          ),
                         ),
                         title: Text(
-                          LocaleKeys.voice_recordLabel.tr(
-                            args: [_formatDuration(item.durationSeconds)],
+                          _replaceLocalizationArgs(
+                            LocaleKeys.voice_recordLabel.tr(),
+                            [_formatDuration(item.durationSeconds)],
                           ),
                         ),
                         subtitle: Text(_formatTimestamp(item.timestamp)),
@@ -325,8 +348,9 @@ class _VoicePageState extends State<VoicePage> {
                   ] else ...[
                     Text(
                       _isRecording
-                          ? LocaleKeys.voice_recordingStatus.tr(
-                              args: [_formatDuration(_elapsed.inSeconds)],
+                          ? _replaceLocalizationArgs(
+                              LocaleKeys.voice_recordingStatus.tr(),
+                              [_formatDuration(_elapsed.inSeconds)],
                             )
                           : LocaleKeys.voice_waitingStatus.tr(),
                       style: const TextStyle(
@@ -346,7 +370,12 @@ class _VoicePageState extends State<VoicePage> {
                         icon: const Icon(Icons.mic),
                         label: Text(LocaleKeys.voice_startButton.tr()),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color.fromARGB(255, 230, 200, 227),
+                          backgroundColor: const Color.fromARGB(
+                            255,
+                            230,
+                            200,
+                            227,
+                          ),
                         ),
                       ),
                       const SizedBox(width: 20),
