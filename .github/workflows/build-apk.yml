@@ -31,6 +31,17 @@ jobs:
           flutter-version: '3.32.6'
           channel: stable
 
+      - name: Cache Flutter packages and Gradle
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.pub-cache
+            ~/.gradle
+            android/.gradle
+          key: ${{ runner.os }}-flutter-${{ hashFiles('**/pubspec.yaml') }}-${{ hashFiles('**/android/gradle.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-flutter-
+
       - name: Install dependencies
         run: flutter pub get
 
