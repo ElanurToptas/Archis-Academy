@@ -43,5 +43,27 @@
   },
   "video": {
     "loadError": "Video loading error"
+  },
+  "voice": {
+    "title": "My recordings",
+    "micPermissionRequiredTitle": "Microphone permission required",
+    "micPermissionRequiredMessage": "You need to enable microphone permission from settings to record.",
+    "cancel": "Cancel",
+    "openSettings": "Open settings",
+    "permissionDenied": "Microphone permission was not granted.",
+    "startFailed": "Recording could not be started. Please try again.",
+    "saveFailed": "Recording could not be saved.",
+    "uploadFailed": "Recording could not be uploaded.",
+    "playbackFailed": "Audio could not be played.",
+    "loadErrorWithDetails": "Could not load recordings: %s",
+    "emptyState": "No recordings yet",
+    "recordLabel": "Recording (%s)",
+    "today": "Today · %s",
+    "dateTime": "%s · %s",
+    "uploading": "Uploading recording...",
+    "recordingStatus": "Recording · %s",
+    "waitingStatus": "Waiting for recording",
+    "startButton": "Start recording",
+    "stopButton": "Finish & upload"
   }
 }
