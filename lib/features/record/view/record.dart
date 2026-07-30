@@ -1,10 +1,10 @@
 import 'package:archis_academy/features/home/model/voice_model.dart';
 import 'package:archis_academy/features/home/service/voice_service.dart';
 import 'package:archis_academy/product/init/language/locale_keys.g.dart';
+import 'package:archis_academy/product/init/theme/app_theme.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
 import 'package:flutter/material.dart';
 
 class RecordPage extends StatefulWidget {
@@ -106,7 +106,7 @@ class _RecordPageState extends State<RecordPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-         centerTitle: true,
+        centerTitle: true,
         title: Padding(
           padding: const EdgeInsets.only(top: 24),
           child: Text("Kayıtlarım"),
@@ -119,7 +119,7 @@ class _RecordPageState extends State<RecordPage> {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: CircularProgressIndicator());
             }
-        
+
             if (snapshot.hasError) {
               return Center(
                 child: Text(
@@ -131,12 +131,12 @@ class _RecordPageState extends State<RecordPage> {
               );
             }
             final recordings = snapshot.data ?? [];
-        
+
             if (recordings.isEmpty) {
               return Center(
                 child: Text(
                   LocaleKeys.voice_emptyState.tr(),
-                  style: TextStyle(color: Colors.grey[500]),
+                  style: TextStyle(color: Theme.of(context).disabledColor),
                 ),
               );
             }
@@ -147,19 +147,14 @@ class _RecordPageState extends State<RecordPage> {
               itemBuilder: (context, index) {
                 final item = recordings[index];
                 final isPlaying = _playingVoiceId == item.id;
-        
+
                 return ListTile(
                   contentPadding: EdgeInsets.zero,
                   leading: CircleAvatar(
-                    backgroundColor: const Color.fromARGB(
-                      255,
-                      245,
-                      232,
-                      245,
-                    ),
+                    backgroundColor: AppTheme.avatarBg,
                     child: Icon(
                       Icons.mic,
-                      color: const Color.fromARGB(255, 142, 56, 139),
+                      color: Theme.of(context).colorScheme.primary,
                     ),
                   ),
                   title: Text(
@@ -175,7 +170,7 @@ class _RecordPageState extends State<RecordPage> {
                           ? Icons.pause_circle_filled
                           : Icons.play_circle_fill,
                       size: 36,
-                      color: const Color.fromARGB(255, 142, 56, 139),
+                      color: Theme.of(context).colorScheme.primary,
                     ),
                     onPressed: () => _sesiToggleEt(item),
                   ),

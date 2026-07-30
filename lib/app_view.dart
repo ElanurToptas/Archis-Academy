@@ -16,9 +16,9 @@ class AppView extends StatelessWidget {
           overlayColor: MaterialStateProperty.all(Colors.transparent),
           iconTheme: WidgetStateProperty.resolveWith((states) {
             if (states.contains(WidgetState.selected)) {
-              return const IconThemeData(size: 28); // Seçili ikon boyutu
+              return const IconThemeData(size: 32); 
             }
-            return const IconThemeData(size: 24); // Seçili olmayan ikon boyutu
+            return const IconThemeData(size: 24); 
           }),
 
           labelTextStyle: WidgetStateTextStyle.resolveWith((states) {
@@ -36,18 +36,29 @@ class AppView extends StatelessWidget {
             );
           }),
         ),
-        child: ClipRRect(
-          borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(25),
-            topRight: Radius.circular(25),
+        child: Container(
+          
+          decoration: BoxDecoration(
+            
+            color: Colors.transparent,
+            border: Border(
+              top: BorderSide(
+                color: Colors.grey.shade300,
+                width: 1,
+              ),
+            ),
           ),
-          child: NavigationBar(
-            selectedIndex: navigationShell.currentIndex,
-            indicatorColor: Colors.transparent,
-            onDestinationSelected: (index) {
-              navigationShell.goBranch(index);
-            },
-
+          
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 4),
+            child: NavigationBar(
+              backgroundColor: Colors.transparent,
+              selectedIndex: navigationShell.currentIndex,
+              indicatorColor: Colors.transparent,
+              onDestinationSelected: (index) {
+                navigationShell.goBranch(index);
+              },
+            
             destinations: [
               _menuItem(
                 context,
@@ -63,8 +74,9 @@ class AppView extends StatelessWidget {
               ),
              
             ],
+                      ),
           ),
-        ),
+      ),
       ),
     );
   }

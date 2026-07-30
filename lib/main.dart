@@ -1,6 +1,7 @@
 import 'package:archis_academy/core/navigation/app_router.dart';
 import 'package:archis_academy/features/auth/repository/auth_repository.dart';
 import 'package:archis_academy/firebase_options.dart';
+import 'package:archis_academy/product/init/theme/app_theme.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -36,6 +37,7 @@ class MyApp extends StatelessWidget {
       supportedLocales: context.supportedLocales,
       locale: context.locale,
       title: 'Archis Academy',
+      theme: AppTheme.lightTheme,
       routerConfig: router,
     );
   }

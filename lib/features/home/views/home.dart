@@ -4,6 +4,7 @@ import 'package:archis_academy/features/home/model/voice_model.dart';
 import 'package:archis_academy/features/home/service/voice_service.dart';
 import 'package:archis_academy/features/auth/repository/auth_repository.dart';
 import 'package:archis_academy/product/init/language/locale_keys.g.dart';
+import 'package:archis_academy/product/init/theme/app_theme.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart' hide AuthProvider;
 import 'package:flutter/foundation.dart';
@@ -170,7 +171,6 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-
   String _formatDuration(int seconds) {
     final d = Duration(seconds: seconds);
     String two(int n) => n.toString().padLeft(2, '0');
@@ -178,8 +178,6 @@ class _HomePageState extends State<HomePage> {
     final secondsStr = two(d.inSeconds.remainder(60));
     return '$minutes:$secondsStr';
   }
-
-
 
   Future<void> _logout() async {
     await context.read<AuthProvider>().signOut();
@@ -191,41 +189,49 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-       
-        actions: [TextButton(onPressed: _logout, child: Text("Çıkış"))],
+        centerTitle: true,
+        title: Text(LocaleKeys.voice_title.tr()),
+        actions: [
+          TextButton(
+            onPressed: _logout,
+            child: Text(
+              "Çıkış",
+              style: TextStyle(color: Theme.of(context).colorScheme.primary),
+            ),
+          ),
+        ],
       ),
       body: SafeArea(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-           
             if (_isUploading) ...[
               const CircularProgressIndicator(),
-                  const SizedBox(height: 12),
-                  Text(
-                    LocaleKeys.voice_uploading.tr(),
-                    style: const TextStyle(fontWeight: FontWeight.w500),
-                  ),
+              const SizedBox(height: 12),
+              Text(
+                LocaleKeys.voice_uploading.tr(),
+                style: const TextStyle(fontWeight: FontWeight.w500),
+              ),
               const SizedBox(height: 12),
             ] else ...[
-             Icon(
-                    Icons.mic,
-                    size: 64,
-                    color: _isRecording
-                        ? Colors.red
-                        : const Color.fromARGB(255, 142, 56, 139),
-                  ),
-                  const SizedBox(height: 12),
-                  Text(
-                    _isRecording
-                        ? _formatDuration(_elapsed.inSeconds)
-                        : LocaleKeys.voice_waitingStatus.tr(),
-                    style: const TextStyle(
-                      color: Color.fromARGB(255, 142, 56, 139),
-                      fontWeight: FontWeight.w600,
-                      fontSize: 18,
-                    ),
-                  ),
+              Icon(
+                Icons.mic,
+                size: 64,
+                color: _isRecording
+                    ? Theme.of(context).colorScheme.error
+                    : Theme.of(context).colorScheme.primary,
+              ),
+              const SizedBox(height: 12),
+              Text(
+                _isRecording
+                    ? _formatDuration(_elapsed.inSeconds)
+                    : LocaleKeys.voice_waitingStatus.tr(),
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.primary,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 18,
+                ),
+              ),
             ],
             const SizedBox(height: 24),
             Row(
@@ -238,12 +244,8 @@ class _HomePageState extends State<HomePage> {
                   icon: const Icon(Icons.mic),
                   label: Text(LocaleKeys.voice_startButton.tr()),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color.fromARGB(
-                      255,
-                      230,
-                      200,
-                      227,
-                    ),
+                    backgroundColor: AppTheme.startButtonBg,
+                    foregroundColor: Theme.of(context).colorScheme.onPrimary,
                   ),
                 ),
                 const SizedBox(width: 20),
@@ -254,7 +256,10 @@ class _HomePageState extends State<HomePage> {
                   icon: const Icon(Icons.stop),
                   label: Text(LocaleKeys.voice_stopButton.tr()),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.red[100],
+                    backgroundColor: Theme.of(
+                      context,
+                    ).colorScheme.errorContainer,
+                    foregroundColor: Theme.of(context).colorScheme.onError,
                   ),
                 ),
               ],
