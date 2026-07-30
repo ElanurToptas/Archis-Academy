@@ -4,12 +4,10 @@ import 'package:archis_academy/features/home/model/voice_model.dart';
 import 'package:archis_academy/features/home/service/voice_service.dart';
 import 'package:archis_academy/features/auth/repository/auth_repository.dart';
 import 'package:archis_academy/product/init/language/locale_keys.g.dart';
-import 'package:audioplayers/audioplayers.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart' hide AuthProvider;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -25,7 +23,6 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   late final AudioRecorder _audioRecorder;
-  late final AudioPlayer _audioPlayer;
   final VoiceService _voiceService = VoiceService();
 
   String get _currentUserId => FirebaseAuth.instance.currentUser?.uid ?? '';
@@ -36,23 +33,10 @@ class _HomePageState extends State<HomePage> {
   Timer? _elapsedTimer;
   Duration _elapsed = Duration.zero;
 
-  String? _playingVoiceId;
-  late final Stream<List<VoiceModel>> _voicesStream;
-
   @override
   void initState() {
     super.initState();
     _audioRecorder = AudioRecorder();
-    _audioPlayer = AudioPlayer();
-    _voicesStream = _voiceService.getVoices(_currentUserId);
-
-    _audioPlayer.onPlayerStateChanged.listen((state) {
-      if (state == PlayerState.completed) {
-        setState(() {
-          _playingVoiceId = null;
-        });
-      }
-    });
   }
 
   @override
@@ -62,7 +46,6 @@ class _HomePageState extends State<HomePage> {
       _audioRecorder.stop();
     }
     _audioRecorder.dispose();
-    _audioPlayer.dispose();
     super.dispose();
   }
 
@@ -187,25 +170,6 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  Future<void> _sesiToggleEt(VoiceModel voice) async {
-    try {
-      if (_playingVoiceId == voice.id) {
-        await _audioPlayer.stop();
-        setState(() {
-          _playingVoiceId = null;
-        });
-      } else {
-        await _audioPlayer.stop();
-        await _audioPlayer.play(UrlSource(voice.downloadUrl));
-        setState(() {
-          _playingVoiceId = voice.id;
-        });
-      }
-    } catch (e) {
-      debugPrint('Ses oynatma hatası: $e');
-      _showError(LocaleKeys.voice_playbackFailed.tr());
-    }
-  }
 
   String _formatDuration(int seconds) {
     final d = Duration(seconds: seconds);
@@ -215,28 +179,7 @@ class _HomePageState extends State<HomePage> {
     return '$minutes:$secondsStr';
   }
 
-  String _replaceLocalizationArgs(String text, List<Object> args) {
-    var result = text;
-    for (final arg in args) {
-      result = result.replaceFirst('%s', arg.toString());
-    }
-    return result;
-  }
 
-  String _formatTimestamp(DateTime dt) {
-    final now = DateTime.now();
-    final isToday =
-        dt.year == now.year && dt.month == now.month && dt.day == now.day;
-    final time =
-        '${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}';
-    final date = '${dt.day}.${dt.month}.${dt.year}';
-    return isToday
-        ? _replaceLocalizationArgs(LocaleKeys.voice_today.tr(), [time])
-        : _replaceLocalizationArgs(LocaleKeys.voice_dateTime.tr(), [
-            date,
-            time,
-          ]);
-  }
 
   Future<void> _logout() async {
     await context.read<AuthProvider>().signOut();
@@ -249,155 +192,72 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
        
-        // centerTitle: true,
-        // title: Padding(
-        //   padding: const EdgeInsets.only(top: 24),
-        //   child: Text("Kayda Başla"),
-        // ),
         actions: [TextButton(onPressed: _logout, child: Text("Çıkış"))],
       ),
       body: SafeArea(
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Expanded(
-              child: StreamBuilder<List<VoiceModel>>(
-                stream: _voicesStream,
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
-                  }
-
-                  if (snapshot.hasError) {
-                    return Center(
-                      child: Text(
-                        _replaceLocalizationArgs(
-                          LocaleKeys.voice_loadErrorWithDetails.tr(),
-                          ['${snapshot.error}'],
-                        ),
-                      ),
-                    );
-                  }
-                  final recordings = snapshot.data ?? [];
-
-                  if (recordings.isEmpty) {
-                    return Center(
-                      child: Text(
-                        LocaleKeys.voice_emptyState.tr(),
-                        style: TextStyle(color: Colors.grey[500]),
-                      ),
-                    );
-                  }
-                  return ListView.separated(
-                    padding: const EdgeInsets.all(16),
-                    itemCount: recordings.length,
-                    separatorBuilder: (_, __) => const Divider(height: 1),
-                    itemBuilder: (context, index) {
-                      final item = recordings[index];
-                      final isPlaying = _playingVoiceId == item.id;
-
-                      return ListTile(
-                        contentPadding: EdgeInsets.zero,
-                        leading: CircleAvatar(
-                          backgroundColor: const Color.fromARGB(
-                            255,
-                            245,
-                            232,
-                            245,
-                          ),
-                          child: Icon(
-                            Icons.mic,
-                            color: const Color.fromARGB(255, 142, 56, 139),
-                          ),
-                        ),
-                        title: Text(
-                          _replaceLocalizationArgs(
-                            LocaleKeys.voice_recordLabel.tr(),
-                            [_formatDuration(item.durationSeconds)],
-                          ),
-                        ),
-                        subtitle: Text(_formatTimestamp(item.timestamp)),
-                        trailing: IconButton(
-                          icon: Icon(
-                            isPlaying
-                                ? Icons.pause_circle_filled
-                                : Icons.play_circle_fill,
-                            size: 36,
-                            color: const Color.fromARGB(255, 142, 56, 139),
-                          ),
-                          onPressed: () => _sesiToggleEt(item),
-                        ),
-                      );
-                    },
-                  );
-                },
-              ),
-            ),
-            Container(
-              padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
-              decoration: BoxDecoration(
-                border: Border(top: BorderSide(color: Colors.grey[200]!)),
-              ),
-              child: Column(
-                children: [
-                  if (_isUploading) ...[
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          LocaleKeys.voice_uploading.tr(),
-                          style: const TextStyle(fontWeight: FontWeight.w500),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-                  ] else ...[
-                    Text(
-                      _isRecording
-                          ? _replaceLocalizationArgs(
-                              LocaleKeys.voice_recordingStatus.tr(),
-                              [_formatDuration(_elapsed.inSeconds)],
-                            )
-                          : LocaleKeys.voice_waitingStatus.tr(),
-                      style: const TextStyle(
-                        color: Color.fromARGB(255, 142, 56, 139),
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                  ],
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      ElevatedButton.icon(
-                        onPressed: (_isRecording || _isUploading)
-                            ? null
-                            : _kaydiBaslat,
-                        icon: const Icon(Icons.mic),
-                        label: Text(LocaleKeys.voice_startButton.tr()),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color.fromARGB(
-                            255,
-                            230,
-                            200,
-                            227,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 20),
-                      ElevatedButton.icon(
-                        onPressed: (!_isRecording || _isUploading)
-                            ? null
-                            : _kaydiDurdur,
-                        icon: const Icon(Icons.stop),
-                        label: Text(LocaleKeys.voice_stopButton.tr()),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.red[100],
-                        ),
-                      ),
-                    ],
+           
+            if (_isUploading) ...[
+              const CircularProgressIndicator(),
+                  const SizedBox(height: 12),
+                  Text(
+                    LocaleKeys.voice_uploading.tr(),
+                    style: const TextStyle(fontWeight: FontWeight.w500),
                   ),
-                ],
-              ),
+              const SizedBox(height: 12),
+            ] else ...[
+             Icon(
+                    Icons.mic,
+                    size: 64,
+                    color: _isRecording
+                        ? Colors.red
+                        : const Color.fromARGB(255, 142, 56, 139),
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    _isRecording
+                        ? _formatDuration(_elapsed.inSeconds)
+                        : LocaleKeys.voice_waitingStatus.tr(),
+                    style: const TextStyle(
+                      color: Color.fromARGB(255, 142, 56, 139),
+                      fontWeight: FontWeight.w600,
+                      fontSize: 18,
+                    ),
+                  ),
+            ],
+            const SizedBox(height: 24),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ElevatedButton.icon(
+                  onPressed: (_isRecording || _isUploading)
+                      ? null
+                      : _kaydiBaslat,
+                  icon: const Icon(Icons.mic),
+                  label: Text(LocaleKeys.voice_startButton.tr()),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color.fromARGB(
+                      255,
+                      230,
+                      200,
+                      227,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 20),
+                ElevatedButton.icon(
+                  onPressed: (!_isRecording || _isUploading)
+                      ? null
+                      : _kaydiDurdur,
+                  icon: const Icon(Icons.stop),
+                  label: Text(LocaleKeys.voice_stopButton.tr()),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red[100],
+                  ),
+                ),
+              ],
             ),
           ],
         ),
