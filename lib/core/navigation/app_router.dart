@@ -1,8 +1,8 @@
 import 'package:archis_academy/app_view.dart';
 import 'package:archis_academy/features/auth/repository/auth_repository.dart';
-import 'package:archis_academy/features/home/view/home.dart';
+import 'package:archis_academy/features/record/view/record.dart';
 import 'package:archis_academy/features/locations/views/locations.dart';
-import 'package:archis_academy/features/voice/views/voice.dart';
+import 'package:archis_academy/features/home/views/home.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -16,7 +16,7 @@ class AppRoutes {
   static const login = '/login';
   static const home = '/';
   static const locations = '/locations';
-  static const voice = '/voice';
+  static const record = '/record';
 }
 
 final authRepo = AuthRepository();
@@ -46,6 +46,10 @@ final router = GoRouter(
       path: AppRoutes.login,
       pageBuilder: (context, state) => _buildPage(const LoginView(), state),
     ),
+    GoRoute(
+      path: AppRoutes.locations,
+      pageBuilder: (context, state) => _buildPage(const LocationsPage(), state),
+    ),
     StatefulShellRoute.indexedStack(
       builder: (context, state, navigationShell) {
         return AppView(navigationShell: navigationShell);
@@ -63,18 +67,9 @@ final router = GoRouter(
         StatefulShellBranch(
           routes: [
             GoRoute(
-              path: AppRoutes.voice,
+              path: AppRoutes.record,
               pageBuilder: (context, state) =>
-                  _buildPage(const VoicePage(), state),
-            ),
-          ],
-        ),
-        StatefulShellBranch(
-          routes: [
-            GoRoute(
-              path: AppRoutes.locations,
-              pageBuilder: (context, state) =>
-                  _buildPage(const LocationsPage(), state),
+                  _buildPage(const RecordPage(), state),
             ),
           ],
         ),

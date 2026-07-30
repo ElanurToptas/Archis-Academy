@@ -1,24 +1,29 @@
 import 'dart:async';
-import 'package:archis_academy/features/voice/model/voice_model.dart';
-import 'package:archis_academy/features/voice/service/voice_service.dart';
+import 'package:archis_academy/core/navigation/app_router.dart';
+import 'package:archis_academy/features/home/model/voice_model.dart';
+import 'package:archis_academy/features/home/service/voice_service.dart';
+import 'package:archis_academy/features/auth/repository/auth_repository.dart';
 import 'package:archis_academy/product/init/language/locale_keys.g.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart' hide AuthProvider;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:provider/provider.dart';
 import 'package:record/record.dart';
 
-class VoicePage extends StatefulWidget {
-  const VoicePage({super.key});
+class HomePage extends StatefulWidget {
+  const HomePage({super.key});
 
   @override
-  State<VoicePage> createState() => _VoicePageState();
+  State<HomePage> createState() => _HomePageState();
 }
 
-class _VoicePageState extends State<VoicePage> {
+class _HomePageState extends State<HomePage> {
   late final AudioRecorder _audioRecorder;
   late final AudioPlayer _audioPlayer;
   final VoiceService _voiceService = VoiceService();
@@ -227,33 +232,33 @@ class _VoicePageState extends State<VoicePage> {
     final date = '${dt.day}.${dt.month}.${dt.year}';
     return isToday
         ? _replaceLocalizationArgs(LocaleKeys.voice_today.tr(), [time])
-        : _replaceLocalizationArgs(
-            LocaleKeys.voice_dateTime.tr(),
-            [date, time],
-          );
+        : _replaceLocalizationArgs(LocaleKeys.voice_dateTime.tr(), [
+            date,
+            time,
+          ]);
+  }
+
+  Future<void> _logout() async {
+    await context.read<AuthProvider>().signOut();
+    if (!mounted) return;
+    context.go(AppRoutes.login);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+       
+        // centerTitle: true,
+        // title: Padding(
+        //   padding: const EdgeInsets.only(top: 24),
+        //   child: Text("Kayda Başla"),
+        // ),
+        actions: [TextButton(onPressed: _logout, child: Text("Çıkış"))],
+      ),
       body: SafeArea(
         child: Column(
           children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    LocaleKeys.voice_title.tr(),
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ],
-              ),
-            ),
             Expanded(
               child: StreamBuilder<List<VoiceModel>>(
                 stream: _voicesStream,

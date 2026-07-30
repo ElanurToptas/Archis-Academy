@@ -51,23 +51,16 @@ class AppView extends StatelessWidget {
             destinations: [
               _menuItem(
                 context,
-                icon: Icons.home_rounded,
-                label: "home",
+                icon: Icons.mic,
+                label: "Record",
                 index: 0,
               ),
               _menuItem(
                 context,
-                icon: Icons.mic,
-                label: "voice",
+                icon: Icons.graphic_eq,
+                label: "Voice",
                 index: 1,
               ),
-              _menuItem(
-                context,
-                icon: Icons.location_on,
-                label: "Locations",
-                index: 2,
-              ),
-
              
             ],
           ),
