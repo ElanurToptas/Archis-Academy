@@ -1,10 +1,11 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:archis_academy/core/navigation/app_router.dart';
-import 'package:archis_academy/features/home/model/voice_model.dart';
 import 'package:archis_academy/features/home/service/voice_service.dart';
 import 'package:archis_academy/features/auth/repository/auth_repository.dart';
+import 'package:archis_academy/features/home/widgets/recording_icon.dart';
+import 'package:archis_academy/features/home/widgets/waveform_painter.dart';
 import 'package:archis_academy/product/init/language/locale_keys.g.dart';
-import 'package:archis_academy/product/init/theme/app_theme.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart' hide AuthProvider;
 import 'package:flutter/foundation.dart';
@@ -30,9 +31,19 @@ class _HomePageState extends State<HomePage> {
 
   bool _isRecording = false;
   bool _isUploading = false;
+  bool _isProcessing = false;
   DateTime? _recordingStartedAt;
   Timer? _elapsedTimer;
-  Duration _elapsed = Duration.zero;
+  final ValueNotifier<Duration> _elapsedNotifier = ValueNotifier(Duration.zero);
+
+  static const int _barCount = 40;
+  static const int _maxRecordingSeconds = 120;
+
+  StreamSubscription<Amplitude>? _amplitudeSub;
+
+  final ValueNotifier<List<double>> _amplitudesNotifier = ValueNotifier(
+    List.filled(_barCount, 0.0, growable: true),
+  );
 
   @override
   void initState() {
@@ -43,6 +54,9 @@ class _HomePageState extends State<HomePage> {
   @override
   void dispose() {
     _elapsedTimer?.cancel();
+    _amplitudeSub?.cancel();
+    _elapsedNotifier.dispose();
+    _amplitudesNotifier.dispose();
     if (_isRecording) {
       _audioRecorder.stop();
     }
@@ -91,7 +105,15 @@ class _HomePageState extends State<HomePage> {
     return requested.isGranted;
   }
 
+  double _normalizeAmplitude(double db) {
+    const minDb = -45.0;
+    const maxDb = 0.0;
+    final clamped = db.clamp(minDb, maxDb);
+    return (clamped - minDb) / (maxDb - minDb);
+  }
+
   Future<void> _kaydiBaslat() async {
+    _isProcessing = true;
     try {
       final hasPermission = await _ensureMicrophonePermission();
       if (!hasPermission) {
@@ -99,26 +121,46 @@ class _HomePageState extends State<HomePage> {
         return;
       }
 
-      // Kayıtları kalıcı olarak saklamak için uygulama belgeler dizinini
-      // kullanıyoruz — geçici dizin (temp) sistem tarafından silinebilir.
       final directory = await getApplicationDocumentsDirectory();
       final path =
           '${directory.path}/record_${DateTime.now().millisecondsSinceEpoch}.m4a';
 
       const config = RecordConfig(encoder: AudioEncoder.aacLc);
-      await _audioRecorder.start(config, path: path);
 
-      if (!mounted) return;
+      await _audioRecorder.start(config, path: path);
+      if (!mounted) {
+        await _audioRecorder.stop();
+        return;
+      }
 
       _recordingStartedAt = DateTime.now();
-      _elapsed = Duration.zero;
+      _elapsedNotifier.value = Duration.zero;
+      _amplitudesNotifier.value = List.filled(_barCount, 0.0, growable: true);
+
       _elapsedTimer?.cancel();
+
       _elapsedTimer = Timer.periodic(const Duration(seconds: 1), (_) {
         if (!mounted) return;
-        setState(() {
-          _elapsed = DateTime.now().difference(_recordingStartedAt!);
-        });
+        final newElapsed = DateTime.now().difference(_recordingStartedAt!);
+        _elapsedNotifier.value = newElapsed;
+
+        if (newElapsed.inSeconds >= _maxRecordingSeconds && !_isProcessing) {
+          _showError(LocaleKeys.voice_timeUp.tr());
+          _kaydiDurdur();
+        }
       });
+
+      _amplitudeSub?.cancel();
+      _amplitudeSub = _audioRecorder
+          .onAmplitudeChanged(const Duration(milliseconds: 100))
+          .listen((amp) {
+                  debugPrint('amp.current: ${amp.current}');
+            if (!mounted) return;
+            final updated = List<double>.from(_amplitudesNotifier.value)
+              ..removeAt(0)
+              ..add(_normalizeAmplitude(amp.current));
+            _amplitudesNotifier.value = updated;
+          });
 
       setState(() {
         _isRecording = true;
@@ -126,13 +168,17 @@ class _HomePageState extends State<HomePage> {
     } catch (e) {
       debugPrint('Kayıt başlatılırken hata oluştu: $e');
       _showError(LocaleKeys.voice_startFailed.tr());
+    } finally {
+      _isProcessing = false;
     }
   }
 
   Future<void> _kaydiDurdur() async {
+    _isProcessing = true;
     try {
       final path = await _audioRecorder.stop();
       _elapsedTimer?.cancel();
+      _amplitudeSub?.cancel();
 
       if (!mounted) return;
 
@@ -141,15 +187,19 @@ class _HomePageState extends State<HomePage> {
 
         setState(() {
           _isRecording = false;
-          _isUploading = true; // Yükleniyor durumunu açıyoruz
+          _isUploading = true;
         });
 
-        // 1. Firebase Storage ve Firestore'a Gönderim
         await _voiceService.uploadAndSaveVoice(
           filePath: path,
           userId: _currentUserId,
           durationSeconds: duration.inSeconds,
         );
+
+        final file = File(path);
+        if (await file.exists()) {
+          await file.delete();
+        }
 
         if (!mounted) return;
         setState(() {
@@ -163,11 +213,23 @@ class _HomePageState extends State<HomePage> {
       }
     } catch (e) {
       debugPrint('Kayıt durdurulamadı veya yüklenemedi: $e');
+      if (!mounted) return;
       setState(() {
         _isUploading = false;
         _isRecording = false;
       });
       _showError(LocaleKeys.voice_uploadFailed.tr());
+    } finally {
+      _isProcessing = false;
+    }
+  }
+
+  void _onTap() {
+    if (_isProcessing || _isUploading) return;
+    if (_isRecording) {
+      _kaydiDurdur();
+    } else {
+      _kaydiBaslat();
     }
   }
 
@@ -187,84 +249,75 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
       appBar: AppBar(
-        centerTitle: true,
-        title: Text(LocaleKeys.voice_title.tr()),
         actions: [
           TextButton(
             onPressed: _logout,
             child: Text(
-              "Çıkış",
-              style: TextStyle(color: Theme.of(context).colorScheme.primary),
+              LocaleKeys.voice_logout.tr(),
+              style: TextStyle(color: colorScheme.primary),
             ),
           ),
         ],
       ),
       body: SafeArea(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            if (_isUploading) ...[
-              const CircularProgressIndicator(),
-              const SizedBox(height: 12),
-              Text(
-                LocaleKeys.voice_uploading.tr(),
-                style: const TextStyle(fontWeight: FontWeight.w500),
-              ),
-              const SizedBox(height: 12),
-            ] else ...[
-              Icon(
-                Icons.mic,
-                size: 64,
-                color: _isRecording
-                    ? Theme.of(context).colorScheme.error
-                    : Theme.of(context).colorScheme.primary,
-              ),
-              const SizedBox(height: 12),
-              Text(
-                _isRecording
-                    ? _formatDuration(_elapsed.inSeconds)
-                    : LocaleKeys.voice_waitingStatus.tr(),
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.primary,
-                  fontWeight: FontWeight.w600,
-                  fontSize: 18,
-                ),
-              ),
-            ],
-            const SizedBox(height: 24),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+        child: Center(
+          child: GestureDetector(
+            onTap: _onTap,
+            behavior: HitTestBehavior.opaque,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
               children: [
-                ElevatedButton.icon(
-                  onPressed: (_isRecording || _isUploading)
-                      ? null
-                      : _kaydiBaslat,
-                  icon: const Icon(Icons.mic),
-                  label: Text(LocaleKeys.voice_startButton.tr()),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppTheme.startButtonBg,
-                    foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                if (_isUploading) ...[
+                  const CircularProgressIndicator(),
+                  const SizedBox(height: 16),
+                  Text(
+                    LocaleKeys.voice_uploading.tr(),
+                    style: const TextStyle(fontWeight: FontWeight.w500),
                   ),
-                ),
-                const SizedBox(width: 20),
-                ElevatedButton.icon(
-                  onPressed: (!_isRecording || _isUploading)
-                      ? null
-                      : _kaydiDurdur,
-                  icon: const Icon(Icons.stop),
-                  label: Text(LocaleKeys.voice_stopButton.tr()),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Theme.of(
-                      context,
-                    ).colorScheme.errorContainer,
-                    foregroundColor: Theme.of(context).colorScheme.onError,
+                  const SizedBox(height: 12),
+                ] else ...[
+                  ValueListenableBuilder<List<double>>(
+                    valueListenable: _amplitudesNotifier,
+                    builder: (context, amplitudes, child) {
+                      return SizedBox(
+                        height: 220,
+                        width: 220,
+                        child: CustomPaint(
+                          painter: WaveformPainter(
+                            amplitudes: amplitudes,
+                            color: _isRecording
+                                ? Colors.red
+                                : colorScheme.primary,
+                            isRecording: _isRecording,
+                          ),
+                         child: RecordingIcon(isRecording: _isRecording),
+                        ),
+                      );
+                    },
                   ),
-                ),
+                  
+                  ValueListenableBuilder<Duration>(
+                    valueListenable: _elapsedNotifier,
+                    builder: (context, elapsed, _) {
+                      return Text(
+                        _isRecording
+                            ? _formatDuration(elapsed.inSeconds)
+                            : "",
+                        style: TextStyle(
+                          color: colorScheme.primary,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 18,
+                        ),
+                      );
+                    },
+                  ),
+                ],
               ],
             ),
-          ],
+          ),
         ),
       ),
     );

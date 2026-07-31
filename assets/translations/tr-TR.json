@@ -64,6 +64,8 @@
     "recordingStatus": "Kaydediliyor · %s",
     "waitingStatus": "Kayıt bekleniyor",
     "startButton": "Kaydı başlat",
-    "stopButton": "Bitir & yükle"
+    "stopButton": "Bitir & yükle",
+    "timeUp": "Süre doldu",
+    "logout": "Çıkış"
   }
 }

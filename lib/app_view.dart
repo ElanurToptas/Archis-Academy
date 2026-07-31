@@ -16,7 +16,7 @@ class AppView extends StatelessWidget {
           overlayColor: MaterialStateProperty.all(Colors.transparent),
           iconTheme: WidgetStateProperty.resolveWith((states) {
             if (states.contains(WidgetState.selected)) {
-              return const IconThemeData(size: 32); 
+              return const IconThemeData(size: 28); 
             }
             return const IconThemeData(size: 24); 
           }),
