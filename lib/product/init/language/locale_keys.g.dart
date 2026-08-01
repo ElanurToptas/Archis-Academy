@@ -62,6 +62,7 @@ abstract class  LocaleKeys {
   static const voice_waitingStatus = 'voice.waitingStatus';
   static const voice_startButton = 'voice.startButton';
   static const voice_stopButton = 'voice.stopButton';
-  static const voice = 'voice';
+  static const voice_timeUp = 'voice.timeUp';
+  static const voice_logout = 'voice.logout';
 
 }

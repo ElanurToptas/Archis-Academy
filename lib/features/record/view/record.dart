@@ -104,12 +104,15 @@ class _RecordPageState extends State<RecordPage> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Padding(
-          padding: const EdgeInsets.only(top: 24),
-          child: Text("Kayıtlarım"),
+        toolbarHeight: 80,
+        title: Text(
+          LocaleKeys.voice_title.tr(),
+          style: TextStyle(fontSize: 24, color: colorScheme.primary),
         ),
       ),
       body: SafeArea(
@@ -140,6 +143,7 @@ class _RecordPageState extends State<RecordPage> {
                 ),
               );
             }
+
             return ListView.separated(
               padding: const EdgeInsets.all(16),
               itemCount: recordings.length,
@@ -152,10 +156,7 @@ class _RecordPageState extends State<RecordPage> {
                   contentPadding: EdgeInsets.zero,
                   leading: CircleAvatar(
                     backgroundColor: AppTheme.avatarBg,
-                    child: Icon(
-                      Icons.mic,
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
+                    child: Icon(Icons.mic, color: colorScheme.primary),
                   ),
                   title: Text(
                     _replaceLocalizationArgs(
@@ -170,7 +171,7 @@ class _RecordPageState extends State<RecordPage> {
                           ? Icons.pause_circle_filled
                           : Icons.play_circle_fill,
                       size: 36,
-                      color: Theme.of(context).colorScheme.primary,
+                      color: colorScheme.primary,
                     ),
                     onPressed: () => _sesiToggleEt(item),
                   ),

@@ -64,6 +64,8 @@
     "recordingStatus": "Recording · %s",
     "waitingStatus": "Waiting for recording",
     "startButton": "Start recording",
-    "stopButton": "Finish & upload"
+    "stopButton": "Finish & upload",
+    "timeUp": "Time is up",
+    "logout": "Logout"
   }
 }
